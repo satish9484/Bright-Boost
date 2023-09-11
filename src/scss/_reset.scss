@@ -1,0 +1,158 @@
+* {
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	outline: none;
+	@include prefix (box-sizing, border-box);
+	-webkit-tap-highlight-color: transparent;
+}
+
+html {
+	@include prefix (text-size-adjust, none);
+	font-family: 'Fira Sans', sans-serif;
+	font-weight: 400;
+}
+
+body {
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	color: $theme-black;
+	font-family: $font-fira;
+	font-weight: 400;
+	background-color: #202020;
+}
+
+img {
+	max-width: 100%;
+	vertical-align: middle;
+	display: inline-block;
+}
+
+a {
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		@extend a;
+	}
+}
+
+button {
+	outline: 0;
+
+	&:hover,
+	&:focus {
+		@extend button;
+	}
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+strong,
+b {
+	margin: 0;
+	line-height: normal;
+	letter-spacing: 0;
+	font-family: $font-fira;
+	font-weight: 400;
+	color: $theme-color;
+}
+
+.text-white {
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	strong,
+	b,
+	p,
+	ul,
+	ol,
+	li {
+		color: $white;
+	}
+}
+
+.text-gray {
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	strong,
+	b,
+	p,
+	ul,
+	ol,
+	li,
+	.timer {
+		color: $black;
+	}
+}
+
+p {
+	margin: 0;
+	padding: 0;
+}
+
+ul,
+ol {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+svg {
+	fill: currentColor;
+	max-width: 100%;
+	vertical-align: middle;
+}
+
+div,
+aside,
+figure,
+figcaption,
+label {
+	margin: 0;
+}
+
+%transition {
+	@include prefix(transition, all 0.3s ease-in-out);
+}
+
+input,
+textarea,
+select,
+header {
+	@include prefix (appearance, none);
+}
+
+::-webkit-input-placeholder {
+	color: $placeholder-color;
+	opacity: 1;
+}
+
+:-moz-placeholder {
+	color: $placeholder-color;
+	opacity: 1;
+}
+
+::-moz-placeholder {
+	color: $placeholder-color;
+	opacity: 1;
+}
+
+:-ms-input-placeholder {
+	color: $placeholder-color;
+	opacity: 1;
+}

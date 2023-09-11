@@ -1,0 +1,91 @@
+version: "3.8"
+x-logging:
+  &my-logging
+  options:
+    max-size: '100m'
+    max-file: '2'
+services:
+  reactjs-bright-boost :
+    # deploy:
+    #     resources:
+    #         limits:
+    #           cpus: '0.50'
+    #           memory: 512M
+    #         reservations:
+    #           cpus: '0.25'
+    #           memory: 128M
+    image: $regurl/reactjs-bright-boost/reactjs-bright-boost:latest
+    hostname: reactjs-bright-boost
+    container_name: reactjs-bright-boost
+    logging: *my-logging
+    #volumes:
+       #- reactjs-bright-boost :/wp-content/uploads //wordpress
+       #- reactjs-bright-boost :/var/www/html
+       #- ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+       #- ./wp-config.php:/usr/local/etc/php/conf.d/wp-config.php
+       #- ./.htaccess:/usr/local/etc/php/conf.d/.htaccess
+    networks:
+      #- default
+      - reactjs-bright-boost
+    ############Not Working#######
+    # networks:
+    #   reactjs-bright-boost:
+    #     ipv4_address: "20.0.0.18"
+    ############################
+    ports:
+      - 7130:80
+    ## aaplication .env file  
+    ##env_file: /opt/ENVIRONMENT/.env
+#######################################
+# Networks: A default used by all container using bridge
+#######################################
+#networks:
+#  reactjs-bright-boost :
+#    driver: bridge
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 20.0.0.16/29
+# networks:
+#   reactjs-bright-boost :
+#     driver: bridge
+#     ipam:
+#      config:
+#        - subnet: 20.0.0.16/29
+#          gateway: 20.0.0.17
+######
+networks:
+  reactjs-bright-boost :
+    driver: bridge
+    ipam:
+     driver: default
+     config:
+       - subnet: 20.0.0.96/29
+         ip_range: 20.0.0.97/29
+         gateway: 20.0.0.97
+         #aux_addresses:
+           #reactjs-bright-boost : 20.0.0.18
+           ##host2: 172.28.1.6
+           ##host3: 172.28.1.7
+################not working############
+# networks:
+#   reactjs-bright-boost :
+#     driver: bridge
+#     ipam:
+#      config:
+#        - subnet: 20.0.0.16/29
+#        - gateway: 20.0.0.17
+################not working############
+#volumes:
+#  reactjs-bright-boost :
+#      driver: local
+#      driver_opts:
+#        type: volume
+#        device: /opt/DockerHomeNAS/MediaFiles/reactjs-bright-boost 
+#        o: bind
+ #test:
+  #   driver: local
+  #   driver_opts:
+  #     type: volume
+  #     device: /opt/DockerHomeNAS/MediaFiles/node/src
+  #     o: bind 

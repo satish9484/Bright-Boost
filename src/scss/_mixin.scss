@@ -1,0 +1,44 @@
+/*--- Webkit ---*/
+@mixin prefix($property, $parameters) {
+    @each $prefix in -o-, -moz-, -ms-, -webkit-, "" {
+        #{$prefix}#{$property}: $parameters;
+    }
+}
+
+/*--- Media Query ---*/
+@mixin responsive($media) {
+    @if $media == lap {
+        @media only screen and (max-width: $lap) { @content; }
+    }
+    @if $media == xl {
+        @media only screen and (max-width: $xl) { @content; }
+    }
+    @if $media == xlg {
+        @media only screen and (max-width: $xlg) { @content; }
+    }
+    @if $media == lg {
+        @media only screen and (max-width: $lg) { @content; }
+    }
+    @else if $media == md {
+        @media only screen and (max-width: $md) { @content; }
+    }
+    @else if $media == sm {
+        @media only screen and (max-width: $sm) { @content; }
+    }
+    @else if $media == xs {
+        @media only screen and (max-width: $xs) { @content; }
+    }
+}
+
+
+
+@mixin linear-gradient($degrees,$color-one,$color-two,$color-two-percent) {
+    background: $color-one;
+    background: -moz-linear-gradient($degrees, $color-one 0%, $color-two $color-two-percent);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%, $color-one), color-stop($color-two-percent, $color-two));
+    background: -webkit-linear-gradient($degrees, $color-one 0%, $color-two $color-two-percent);
+    background: -o-linear-gradient($degrees, $color-one 0%, $color-two $color-two-percent);
+    background: -ms-linear-gradient($degrees, $color-one 0%, $color-two $color-two-percent);
+    background: linear-gradient($degrees, $color-one 0%, $color-two $color-two-percent);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='$color-one', endColorstr='$color-two',GradientType=1 );
+}

@@ -1,0 +1,43 @@
+@import "../../../scss/variable";
+
+.breadcrumbsList {
+  margin-bottom: 20px;
+  li {
+    display: inline-block;
+    position: relative;
+    a {
+      font-size: 16px;
+      font-weight: 400;
+      display: inline-block;
+      h4 {
+        font-size: 16px;
+        font-weight: 600;
+      }
+    }
+    h4 {
+      display: inline-block;
+      color: $black;
+      font-size: 16px;
+      font-weight: 400;
+    }
+    &.active {
+      color: white;
+    }
+    &:after {
+      content: "/";
+      margin: 0 10px;
+      color: white;
+    }
+    &:last-child {
+      &:after {
+        display: none;
+      }
+    }
+    .mainPage {
+      color: #42a44c;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1;
+    }
+  }
+}

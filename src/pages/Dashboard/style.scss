@@ -1,0 +1,30 @@
+@import "../../scss/variable";
+
+.card-box {
+  background-color: $primary;
+  // width: 300px;
+  color: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  padding: 20px 20px;
+  min-height: 150px;
+  margin-bottom: 20px;
+
+  figure {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: $theme-light;
+    margin-bottom: 10px;
+  }
+
+  h5 {
+    margin-bottom: 10px;
+    color: $white;
+  }
+
+  span {
+    display: block;
+  }
+}

@@ -1,0 +1,11 @@
+@import "../../../scss/variable";
+@import "../../../scss/mixin";
+
+.card {
+  padding: 30px;
+  border-radius: 10px;
+  background: $primary;
+  @include prefix(box-shadow, 0px 4px 8px rgba(67, 67, 67, 0.4));
+}
+
+

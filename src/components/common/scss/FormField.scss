@@ -1,0 +1,14 @@
+@import '../../../scss/variable';
+@import '../../../scss/mixin';
+@import '../../../scss/flex';
+
+
+// ant-input css start
+.ant-form-item { max-width:328px; width: 100%;
+  .ant-input-clear-icon { @extend .d-flex-center-center; }
+  .ant-input-affix-wrapper { border: 1px solid $color2; border-radius: 10px;
+    .ant-input { font-weight: 400; font-size: 14px; line-height: 16px; color: $text-color2; }
+  }
+  .ant-input-prefix { margin-right: 14px; }
+}
+// ant-input css over

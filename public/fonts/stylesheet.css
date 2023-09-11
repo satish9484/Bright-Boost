@@ -1,0 +1,65 @@
+@font-face {
+    font-family: 'Moderat';
+    src: url('Moderat-Bold.eot');
+    src: url('Moderat-Bold.eot?#iefix') format('embedded-opentype'),
+        url('Moderat-Bold.woff2') format('woff2'),
+        url('Moderat-Bold.woff') format('woff'),
+        url('Moderat-Bold.ttf') format('truetype'),
+        url('Moderat-Bold.svg#Moderat-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'IvyJournal';
+    src: url('IvyJournal-Regular.eot');
+    src: url('IvyJournal-Regular.eot?#iefix') format('embedded-opentype'),
+        url('IvyJournal-Regular.woff2') format('woff2'),
+        url('IvyJournal-Regular.woff') format('woff'),
+        url('IvyJournal-Regular.ttf') format('truetype'),
+        url('IvyJournal-Regular.svg#IvyJournal-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Moderat';
+    src: url('Moderat-Regular.eot');
+    src: url('Moderat-Regular.eot?#iefix') format('embedded-opentype'),
+        url('Moderat-Regular.woff2') format('woff2'),
+        url('Moderat-Regular.woff') format('woff'),
+        url('Moderat-Regular.ttf') format('truetype'),
+        url('Moderat-Regular.svg#Moderat-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Moderat';
+    src: url('Moderat-Bold_1.eot');
+    src: url('Moderat-Bold_1.eot?#iefix') format('embedded-opentype'),
+        url('Moderat-Bold_1.woff2') format('woff2'),
+        url('Moderat-Bold_1.woff') format('woff'),
+        url('Moderat-Bold_1.ttf') format('truetype'),
+        url('Moderat-Bold_1.svg#Moderat-Bold') format('svg');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Moderat';
+    src: url('Moderat-Regular_1.eot');
+    src: url('Moderat-Regular_1.eot?#iefix') format('embedded-opentype'),
+        url('Moderat-Regular_1.woff2') format('woff2'),
+        url('Moderat-Regular_1.woff') format('woff'),
+        url('Moderat-Regular_1.ttf') format('truetype'),
+        url('Moderat-Regular_1.svg#Moderat-Regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

@@ -1,0 +1,37 @@
+@import "../../scss/variable";
+@import "../../scss/mixin";
+
+.user-management {
+
+  .verification {
+    display: inline-block;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-weight: 600;
+  }
+
+  .verified {
+    color: $success;
+    border: 1px solid rgba($color: $success, $alpha: 0.8);
+  }
+  .inReview {
+    color: $danger;
+    border: 1px solid $danger;
+  }
+}
+
+.ant-switch-checked {
+  background-color: #757575;
+  
+  &:focus {
+    box-shadow: none;
+  }
+}
+
+.editUserManagement {
+  .label {
+    color: $white;
+     font-size: 14px;
+     margin-bottom: 10px;
+  }
+}
