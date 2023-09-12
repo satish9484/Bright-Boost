@@ -2,89 +2,21 @@ import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import { toAbsoluteUrl } from "../../utils";
-import { auth, database } from "../../firebase/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { get, ref } from "firebase/database";
-
-// const updateRoleInDatabase = async (uid, role) => {
-//   try {
-//     const userRef = ref(database, `users/${uid}`);
-//     await set(userRef, { role: role });
-//     console.log("Role updated successfully");
-//   } catch (error) {
-//     console.error("Error updating role:", error.message);
-//   }
-// };
-
-// const fetchRole = async (uid) => {
-//   try {
-//     const userRef = ref(database, `users/${uid}`);
-//     const snapshot = await get(userRef);
-//     if (snapshot.exists()) {
-//       const userData = snapshot.val();
-//       const userRole = userData.role;
-//       console.log(userRole);
-//     } else {
-//       console.log("User data not found");
-//     }
-//   } catch (error) {
-//     console.error("Error fetching role:", error.message);
-//   }
-// };
+import { setUser } from "../../Redux/AuthSlice";
+import { useDispatch } from "react-redux";
 
 const LoginIn = () => {
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
   // const [err, setErr] = useState(false);
 
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFinish = async (values) => {
-    await signInWithEmailAndPassword(
-      auth,
-      values.email.trim(),
-      values.password.trim()
-    )
-      .then(async (userCredential) => {
-        // Signed in
-        console.log("SUCCESSFULLY LOGIN");
-        // Access and print user  data
-        console.log("User:", userCredential.user);
-
-        navigate("/dashboard");
-        const uid = userCredential.user.uid;
-        try {
-          const userRef = ref(database, `users/${uid}`);
-          const snapshot = await get(userRef);
-          if (snapshot.exists()) {
-            const userData = snapshot.val();
-            const userRole = userData.role;
-            console.log(userRole);
-            navigate("/dashboard");
-          } else {
-            console.log("User data not found");
-          }
-        } catch (error) {
-          console.error("Error fetching role:", error.message);
-        }
-
-        // set the user role while they register for the first time
-
-        // updateRoleInDatabase(uid, "admin");
-
-        // const user = userCredential.user;
-        // console.log("User login  " + Object.entries(user));
-        // // navigate("/");
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log("User login ErrorCode " + errorCode);
-        console.log("User login  Error Message " + errorMessage);
-        // setErr(true);
-      });
+    dispatch(
+      setUser({ email: values.email.trim(), password: values.password.trim() })
+    );
   };
 
   return (
