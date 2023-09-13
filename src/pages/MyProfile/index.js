@@ -21,8 +21,8 @@ const MyProfile = () => {
 						</figure>
 					</div>
 					<div className='desc'>
-						<h3>John doe</h3>
-						<p><a href="mailTo: johndoe@gmail.com" className='link'>johndoe@gmail.com</a></p>
+						<h3>Jane Roe</h3>
+						<p><a href="mailTo: janeroe@gmail.com" className='link'>janeroe@gmail.com</a></p>
 						<p><a href="tel: (302) 988-4832" className='link'>(302) 988-4832</a></p>
 						<Button type="primary" onClick={() => navigate('/mypatients/add')}> Edit profile </Button>
 					</div>
