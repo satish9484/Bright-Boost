@@ -24,7 +24,7 @@ const MyProfile = () => {
 						<h3>John doe</h3>
 						<p><a href="mailTo: johndoe@gmail.com" className='link'>johndoe@gmail.com</a></p>
 						<p><a href="tel: (302) 988-4832" className='link'>(302) 988-4832</a></p>
-						<Button type="primary" onClick={() => navigate('/mypatients/add')}> Edit profile </Button>
+						<Button type="primary" onClick={() => navigate('/myprofile/edit')}> Edit profile </Button>
 					</div>
 				</Card>
 			</div>

@@ -1,4 +1,4 @@
-import React, { lazy, useState } from "react";
+import React, { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import EditUserManagement from "./UserManagement/edit";
@@ -15,7 +15,7 @@ const ChangePassword = lazy(() => import("./MyProfile/ChangePassword"));
 const UserManagement = lazy(() => import("./UserManagement"));
 
 const Routing = () => {
-  const [container, setContainer] = useState(null);
+  // const [container, setContainer] = useState(null);
 
   return (
     <Routes>
@@ -25,7 +25,8 @@ const Routing = () => {
       <Route path="/resetpassword" element={<ResetPassword />} />
       <Route
         path="/"
-        element={<Layout setContainer={setContainer} container={container} />}
+        // element={<Layout setContainer={setContainer} container={container} />}
+        element={<Layout />}
       >
         <Route path="/" element={<Navigate replace to="/dashboard" />} />
         <Route path="/dashboard" element={<Dashboard />} />

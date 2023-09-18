@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Col, Dropdown, Layout, Row, Space } from "antd";
+import { Avatar, Button, Col, Dropdown, Layout, Row, Space } from "antd";
 import { ProfileDown, ProfileUp } from "../../../svg";
 import { toAbsoluteUrl } from "../../../utils";
 import "./style.scss";
@@ -21,41 +21,37 @@ const AppHeader = () => {
     {
       key: "1",
       label: (
-        <Link onClick={handleProfileClick} to="/myprofile">
-          My profile
-        </Link>
+        <Button type="link" onClick={handleProfileClick}>
+          <Link to="/myprofile">My profile</Link>
+        </Button>
       ),
       // icon: <Union />,
     },
     {
       key: "2",
       label: (
-        <Link onClick={handleProfileClick} to="/myprofile/edit">
-          Edit profile
-        </Link>
+        <Button type="link" onClick={handleProfileClick}>
+          <Link to="/myprofile/edit">Edit profile</Link>
+        </Button>
       ),
       // icon: <Union />,
     },
     {
       key: "3",
       label: (
-        <Link onClick={handleProfileClick} to="/myprofile/changepassword">
-          Change password
-        </Link>
+        <Button type="link" onClick={handleProfileClick}>
+          <Link to="/myprofile/changepassword">Change Password</Link>
+        </Button>
       ),
       // icon: <Union />,
     },
+
     {
       key: "4",
-      label: <a href="/">Email notifications</a>,
-      // icon: <Union />,
-    },
-    {
-      key: "5",
       label: (
-        <Link onClick={handleProfileClick} to="/login">
-          Logout
-        </Link>
+        <Button type="link" onClick={handleProfileClick}>
+          <Link to="/login">Logout</Link>
+        </Button>
       ),
       // icon: <Union />,
     },
