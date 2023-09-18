@@ -1,14 +1,17 @@
 // Properly organized imports, consistent naming, and added comments for clarity
 
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Avatar, Col, Dropdown, Layout, Row, Space } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { Avatar, Button, Col, Dropdown, Layout, Row, Space } from "antd";
 import { ProfileDown, ProfileUp } from "../../../svg";
 import { toAbsoluteUrl } from "../../../utils";
 import "./style.scss";
+import { signOut } from "firebase/auth";
+import { auth } from "../../../firebase/firebase";
 
 const AppHeader = () => {
   const { Header } = Layout;
+  const navigate = useNavigate(null);
 
   const [dropDownArrowDirection, setDropDownArrowDirection] = useState(false);
 
@@ -17,45 +20,52 @@ const AppHeader = () => {
     setDropDownArrowDirection(false);
   };
 
+  const handleSignout = async () => {
+    await signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        navigate("/login");
+      })
+      .catch((error) => {
+        // An error happened.
+      });
+  };
+
   const items = [
     {
       key: "1",
       label: (
-        <Link onClick={handleProfileClick} to="/myprofile">
-          My profile
-        </Link>
+        <Button type="link" onClick={handleProfileClick}>
+          <Link to="/myprofile">My Profile</Link>
+        </Button>
       ),
       // icon: <Union />,
     },
     {
       key: "2",
       label: (
-        <Link onClick={handleProfileClick} to="/myprofile/edit">
-          Edit profile
-        </Link>
+        <Button type="link" onClick={handleProfileClick}>
+          <Link to="/myprofile/edit">Edit Profile</Link>
+        </Button>
       ),
       // icon: <Union />,
     },
     {
       key: "3",
       label: (
-        <Link onClick={handleProfileClick} to="/myprofile/changepassword">
-          Change password
-        </Link>
+        <Button type="link" onClick={handleProfileClick}>
+          <Link to="/myprofile/changepassword">Change password</Link>
+        </Button>
       ),
       // icon: <Union />,
     },
+
     {
       key: "4",
-      label: <a href="/">Email notifications</a>,
-      // icon: <Union />,
-    },
-    {
-      key: "5",
       label: (
-        <Link onClick={handleProfileClick} to="/login">
-          Logout
-        </Link>
+        <Button type="link" onClick={handleSignout}>
+          Sign Out
+        </Button>
       ),
       // icon: <Union />,
     },

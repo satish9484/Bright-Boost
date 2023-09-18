@@ -1,7 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { auth, database } from "../firebase/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
 import {
   API_LOGIN,
@@ -10,8 +8,6 @@ import {
   LS_AUTHTOKEN,
   LS_USER,
 } from "../constants";
-
-import { ref, set, get } from "firebase/database";
 
 const initialState = {
   // Global loader for api
@@ -41,68 +37,22 @@ export const loginAction = (data) => ({
 });
 
 // Reducer
-const loginSlice = createSlice({
+const AuthSlice = createSlice({
   name: "login",
   initialState: initialState,
   reducers: {
     loaderChange: (state, payload) => {
       state.isLoading = payload.payload;
     },
+
     // Reducer to set the user data in the state
     setUser: async (state, action) => {
-      console.log(action);
-      await signInWithEmailAndPassword(
-        auth,
-        action.payload.email,
-        action.payload.password
-      )
-        .then(async (userCredential) => {
-          // Signed in
-          console.log("SUCCESSFULLY LOGIN");
-          // Access and print user  data
-          console.log("User:", userCredential.user);
-
-          const uid = userCredential.user.uid;
-
-          try {
-            const userRef = ref(database, `users/${uid}`);
-            await set(userRef, { role: "admin" });
-            console.log("Role updated successfully");
-          } catch (error) {
-            console.error("Error updating role:", error.message);
-          }
-
-          try {
-            const userRef = ref(database, `users/${uid}`);
-            const snapshot = await get(userRef);
-            if (snapshot.exists()) {
-              const userData = snapshot.val();
-              const userRole = userData.role;
-
-              console.log(userRole);
-            } else {
-              console.log("User data not found");
-            }
-          } catch (error) {
-            console.error("Error fetching role:", error.message);
-          }
-
-          // localStorage.setItem(
-          //   LS_AUTHTOKEN,
-          //   JSON.stringify(await userCredential.user.getIdToken())
-          // );
-          localStorage.setItem(LS_USER, JSON.stringify(userCredential.user));
-
-          state.userData = action.payload;
-          state.isLoggedIn = true;
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log("User login ErrorCode " + errorCode);
-          console.log("User login  Error Message " + errorMessage);
-          // setErr(true);
-        });
+      localStorage.setItem(
+        LS_AUTHTOKEN,
+        JSON.stringify(action?.payload?.accessToken)
+      );
+      localStorage.setItem(LS_USER, JSON.stringify(action?.payload));
+      state.userData = action?.payload;
     },
 
     // Reducer to set the loading state in the state
@@ -115,6 +65,7 @@ const loginSlice = createSlice({
       state.error = action.payload;
     },
   },
+
   extraReducers: (builder) => {
     builder.addCase(LOGIN_S, (state, action) => {
       // Default header for auth
@@ -141,6 +92,8 @@ const loginSlice = createSlice({
   },
 });
 
-export const { loaderChange, setUser, loading, setError } = loginSlice.actions;
+export const userData = (state) => state.login.userData;
 
-export default loginSlice.reducer;
+export const { loaderChange, setUser, loading, setError } = AuthSlice.actions;
+
+export default AuthSlice.reducer;

@@ -38,7 +38,7 @@ const items = [
   //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
   // ]),
 ];
-console.log("items: ", items);
+// console.log("items: ", items);
 
 const currentActiveKey = () => {
   let result = "dashboard";

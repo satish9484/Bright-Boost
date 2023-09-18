@@ -1,22 +1,60 @@
 import React, { useState } from "react";
 import { Button, Form, Input } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./style.scss";
 import { toAbsoluteUrl } from "../../utils";
 import { setUser } from "../../Redux/AuthSlice";
 import { useDispatch } from "react-redux";
-
+import { auth, database } from "../../firebase/firebase";
+import { get, ref, set } from "firebase/database";
+import { signInWithEmailAndPassword } from "firebase/auth";
 const LoginIn = () => {
   const dispatch = useDispatch();
-  // const [err, setErr] = useState(false);
-
+  const navigate = useNavigate(null);
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleFinish = async (values) => {
-    dispatch(
-      setUser({ email: values.email.trim(), password: values.password.trim() })
-    );
+    await signInWithEmailAndPassword(
+      auth,
+      values.email.trim(),
+      values.password.trim()
+    )
+      .then(async (userCredential) => {
+        dispatch(setUser(userCredential?.user));
+        navigate("/dashboard");
+
+        const uid = userCredential.user.uid;
+
+        try {
+          const userRef = ref(database, `users/${uid}`);
+          await set(userRef, { role: "admin" });
+          console.log("Role updated successfully");
+        } catch (error) {
+          console.error("Error updating role:", error.message);
+        }
+
+        try {
+          const userRef = ref(database, `users/${uid}`);
+          const snapshot = await get(userRef);
+          if (snapshot.exists()) {
+            const userData = snapshot.val();
+            const userRole = userData.role;
+            console.log(userRole);
+          } else {
+            console.log("User data not found");
+          }
+        } catch (error) {
+          console.error("Error fetching role:", error.message);
+        }
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("User login ErrorCode " + errorCode);
+        console.log("User login  Error Message " + errorMessage);
+        // setErr(true);
+      });
   };
 
   return (
