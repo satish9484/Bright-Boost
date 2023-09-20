@@ -10,6 +10,7 @@ const ResetPassword = lazy(() => import("./ResetPassword"));
 const Layout = lazy(() => import("../components/layout"));
 const Dashboard = lazy(() => import("./Dashboard"));
 const MyProfile = lazy(() => import("./MyProfile"));
+const KennethTest1 = lazy(() => import("./KennethTest1"));
 const EditProfile = lazy(() => import("./MyProfile/EditProfile"));
 const ChangePassword = lazy(() => import("./MyProfile/ChangePassword"));
 const UserManagement = lazy(() => import("./UserManagement"));
@@ -31,7 +32,8 @@ const Routing = () => {
         <Route path="/" element={<Navigate replace to="/dashboard" />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/myprofile" element={<MyProfile />} />
-        <Route path="/myprofile/edit" element={<EditProfile />} />
+        <Route path="/kenneth-test-1" element={<KennethTest1 />} />
+	<Route path="/myprofile/edit" element={<EditProfile />} />
         <Route path="/myprofile/changepassword" element={<ChangePassword />} />
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/myprofile/edit" element={<EditProfile />} />
