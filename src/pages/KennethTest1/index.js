@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import "./style.scss";
 import { toAbsoluteUrl } from "../../utils";
 import { auth, database } from "../../firebase/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { get, ref } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { collection, getDocs, doc, addDoc, updateDoc, deleteDoc, query, where } from "firebase/firestore";
@@ -41,16 +41,19 @@ const KennethTest1 = () => {
   const queryResult = [];
   const [dataSource, setDataSource] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [uid, setUid] = useState(null);
   const userPushed = {};
   var numUserPushed = 0;
   const orderPushed = {};
+
+  const auth = getAuth();
 
   const columns_users = [
  	 {
 		 title: 'ID',
 		 dataIndex: 'id',
-		 key: 'id'
- 	 },
+		 key: 'id'  
+	 },
 	 {
 		 title: 'Name',
 		 dataIndex: 'name',
@@ -87,7 +90,13 @@ const KennethTest1 = () => {
  ]; 
  
 
-  console.log("Loading . . .");
+  onAuthStateChanged(auth, (user) => {
+	  if (user) {
+	  	setUid(user.uid);
+		console.log("User details:");
+		console.log(user);
+	  }  
+  });
 
   async function fetchData() {
 	await getDocs(query(collection(db, "kenneth_test"))).then(async (userQuerySnapshot) => {
@@ -181,6 +190,13 @@ const KennethTest1 = () => {
   if (isLoading) {
 	return (
 		<Skeleton />	
+	);
+  }
+  else if (!uid) {
+	return (
+		<>
+			Please login before proceeding...
+		</>
 	);
   }
   // console.log(dataSource); 

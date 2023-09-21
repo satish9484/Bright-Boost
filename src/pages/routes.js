@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import EditUserManagement from "./UserManagement/edit";
 
 const LoginIn = lazy(() => import("./LoginIn"));
+const Register = lazy(() => import("./Register"));
 const ForgotPassword = lazy(() => import("./ForgotPassword"));
 const ResetPassword = lazy(() => import("./ResetPassword"));
 
@@ -24,6 +25,8 @@ const Routing = () => {
       <Route path="/login" element={<LoginIn />} />
       <Route path="/forgotpassword" element={<ForgotPassword />} />
       <Route path="/resetpassword" element={<ResetPassword />} />
+      <Route path="/register" element={<Register />} />
+ 
       <Route
         path="/"
         // element={<Layout setContainer={setContainer} container={container} />}
