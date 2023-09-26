@@ -2,9 +2,12 @@
 
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Avatar, Button, Col, Dropdown, Layout, Row, Space } from "antd";
+import { Avatar, Button, Col, Dropdown, Layout, Row, Space, notification } from "antd";
 import { ProfileDown, ProfileUp } from "../../../svg";
 import { toAbsoluteUrl } from "../../../utils";
+import {  signOut } from "firebase/auth";
+import { auth } from '../../../firebase/firebase';
+import { useNavigate } from 'react-router-dom';
 import "./style.scss";
 
 const AppHeader = () => {
@@ -15,6 +18,26 @@ const AppHeader = () => {
   const handleProfileClick = (e) => {
     e.preventDefault();
     setDropDownArrowDirection(false);
+  };
+
+  const navigate = useNavigate();
+
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotification = (notifTitle, notifContent) => {
+  	api.open({
+		message: notifTitle,
+		description: notifContent
+	});
+  };
+
+  const handleLogout = (e) => {
+	signOut(auth).then(() => {
+		openNotification("Log out", "Logged out successfully");
+		setTimeout(() => {navigate("/login")}, 1000);      
+	}).catch((error) => {
+              	openNotification("Log out", "Failed to log out! Error: " + error); 
+	});
   };
 
   const items = [
@@ -49,8 +72,8 @@ const AppHeader = () => {
     {
       key: "4",
       label: (
-        <Button type="link" onClick={handleProfileClick}>
-          <Link to="/login">Logout</Link>
+        <Button type="link" onClick={handleLogout}>
+          <Link to="#">Logout</Link>
         </Button>
       ),
       // icon: <Union />,
@@ -63,6 +86,8 @@ const AppHeader = () => {
   };
 
   return (
+  <>
+    {contextHolder}
     <Header className="layout-header">
       <Row gutter={16}>
         <Col className="gutter-row d-flex-center-end" span={24}>
@@ -89,6 +114,7 @@ const AppHeader = () => {
         </Col>
       </Row>
     </Header>
+  </>
   );
 };
 
