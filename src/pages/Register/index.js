@@ -7,6 +7,7 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
 import { db, storage } from "../../firebase/firebase";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import  { Redirect } from 'react-router-dom'
 
 
 import '../MyProfile/MyProfile.scss';
@@ -15,7 +16,7 @@ const { Title } = Typography;
 
 const collectionId = "Bright-Boost";
 
-const Register = () => {
+const Register = (props) => {
   const [api, contextHolder] = notification.useNotification();
   const [isLoading, setIsLoading] = useState(false); 
   const [numSubjects, setNumSubjects] = useState(0); 
@@ -152,8 +153,10 @@ const Register = () => {
             subjectsEnrolled: values.subjectsEnrolled
         })
     }).then(() => {
-        setIsLoading(false);
         openNotification("Success", "Student registration is successful");
+        window.setInterval(function () {
+            window.location.href = '/dashboard';
+        }, 1000);
     });
   }
 
