@@ -51,17 +51,17 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState([]);
 
-  const currentActiveKey = () => {
-    let result = "dashboard";
+  // const currentActiveKey = () => {
+  //   let result = "dashboard";
 
-    for (let index = 0; index < items.length; index++) {
-      const element = items[index];
-      if (window.location.pathname.includes(element.key)) {
-        result = element.key;
-        return result;
-      }
-    }
-  };
+  //   for (let index = 0; index < items.length; index++) {
+  //     const element = items[index];
+  //     if (window.location.pathname.includes(element.key)) {
+  //       result = element.key;
+  //       return result;
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (currentUser?.email) {
