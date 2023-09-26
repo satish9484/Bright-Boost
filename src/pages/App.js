@@ -9,7 +9,7 @@ import Loader from "../components/common/loader";
 import { store } from "../Redux/store";
 import { AuthContextProvider } from "../context/AuthContext";
 
-const { PUBLIC_URL } = process.env;
+const { PUBLIC_URL } = process.env
 
 // setupAxios(axios, store);
 

@@ -61,7 +61,7 @@
   }
 
   .ant-menu {
-    background: transparent;
+    // background: transparent;
     border: 0;
 
     &.ant-menu-root {
@@ -93,25 +93,25 @@
         padding: 10px;
       }
 
-      // .ant-menu-item-only-child {
-      //   span {
-      //     color: $white;
-      //   }
-      // }
-      // .ant-menu-item-active {
-      //   background: rgba($color: $white, $alpha: 1) !important;
-      //   span {
-      //     color: $black;
-      //   }
-      // }
-      // .ant-menu-submenu-title > .ant-menu-submenu-arrow {
-      //   color: $black;
-      // }
+      .ant-menu-item-only-child {
+        span {
+          color: $white;
+        }
+      }
+      .ant-menu-item-active {
+        // background: rgba($color: $white, $alpha: 1) !important;
+        span {
+          color: $black;
+        }
+      }
+      .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+        color: $black;
+      }
 
-      // &:hover > .ant-menu-submenu-title > .ant-menu-submenu-expand-icon,
-      // &:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
-      //   color: $theme-color;
-      // }
+      &:hover > .ant-menu-submenu-title > .ant-menu-submenu-expand-icon,
+      &:hover > .ant-menu-submenu-title > .ant-menu-submenu-arrow {
+        color: $theme-color;
+      }
     }
 
     svg {
