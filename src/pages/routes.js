@@ -1,7 +1,7 @@
 import React, { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 
-import EditUserManagement from "./UserManagement/edit";
+import EditUserManagement from "./admin/UserManagement/edit";
 
 const LoginIn = lazy(() => import("./LoginIn"));
 const ForgotPassword = lazy(() => import("./ForgotPassword"));
@@ -13,7 +13,7 @@ const MyProfile = lazy(() => import("./MyProfile"));
 const KennethTest1 = lazy(() => import("./KennethTest1"));
 const EditProfile = lazy(() => import("./MyProfile/EditProfile"));
 const ChangePassword = lazy(() => import("./MyProfile/ChangePassword"));
-const UserManagement = lazy(() => import("./UserManagement"));
+const UserManagement = lazy(() => import("./admin/UserManagement"));
 
 const Routing = () => {
   // const [container, setContainer] = useState(null);
@@ -33,7 +33,7 @@ const Routing = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/kenneth-test-1" element={<KennethTest1 />} />
-	<Route path="/myprofile/edit" element={<EditProfile />} />
+        <Route path="/myprofile/edit" element={<EditProfile />} />
         <Route path="/myprofile/changepassword" element={<ChangePassword />} />
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/myprofile/edit" element={<EditProfile />} />
