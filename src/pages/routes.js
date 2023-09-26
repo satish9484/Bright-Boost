@@ -7,6 +7,8 @@ import { db } from "../firebase/firebase";
 
 // Admin routes imports
 import EditUserManagement from "./admin/UserManagement/edit";
+import TutorAvailability from "./admin/TutorAvailability/index";
+import SessionArrangement from "./admin/SessionArrangement/index";
 
 // student routes imports
 import SessionRegistration from "./student/sessionRegistration/index";
@@ -141,6 +143,14 @@ const Routing = () => {
           <Route
             path="/admin/userManagement/edit"
             element={<EditUserManagement />}
+          />
+          <Route
+            path="/admin/tutoavailability"
+            element={<TutorAvailability />}
+          />
+          <Route
+            path="/admin/sessionarrangement"
+            element={<SessionArrangement />}
           />
         </Route>
       ) : currentUser && userRole !== null && userRole === "student" ? (

@@ -25,6 +25,19 @@ export const adminSidebarItems = [
       <UserICon />
     </Link>
   ),
+  getItem(
+    "TutorAvailability",
+    "tutoavailability",
+    <Link to="/admin/tutoavailability">
+      <UserICon />
+    </Link>
+  ), getItem(
+    "Session Arrangement",
+    "sessionarrangement",
+    <Link to="/admin/sessionarrangement">
+      <UserICon />
+    </Link>
+  ),
   // getItem("Car Management", "car management", <Union />, [
   //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
   //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
