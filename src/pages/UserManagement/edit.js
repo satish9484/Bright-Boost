@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import BreadCrumbs from "../../components/common/Breadcrumbs";
 import Card from "../../components/common/Card";
-import "../UserManagement/UserManagement.scss";
+import "./UserManagement.scss";
 
 const list = [
   {
