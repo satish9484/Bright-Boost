@@ -1,7 +1,7 @@
 import React from "react";
 
-const SessionRegister = () => {
-  return <div>SessionRegister</div>;
+const SessionRegistration = () => {
+  return <div>SessionRegistration</div>;
 };
 
-export default SessionRegister;
+export default SessionRegistration;

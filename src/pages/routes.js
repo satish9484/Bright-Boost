@@ -8,7 +8,7 @@ import { db } from "../firebase/firebase";
 // Admin routes imports
 import EditUserManagement from "./admin/UserManagement/edit";
 import TutorAvailability from "./admin/TutorAvailability/index";
-import SessionArrangement from "./admin/SessionArrangement/index";
+import SessionArrangement from "./admin/sessionArrangement/index";
 
 // student routes imports
 import SessionRegistration from "./student/sessionRegistration/index";
