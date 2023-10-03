@@ -57,6 +57,7 @@ const Register = (props) => {
   const subscriptionOptions = [ BasicSubscription, IntermediateSubscription, AdvancedSubscription ];
 
 
+  const navigate = useNavigate();
   const openNotification = (notifTitle, notifContent) => {
     api.open({
              message: notifTitle,
@@ -155,7 +156,7 @@ const Register = (props) => {
     }).then(() => {
         openNotification("Success", "Student registration is successful");
         window.setInterval(function () {
-            window.location.href = '/dashboard';
+            navigate("/login");
         }, 1000);
     });
   }
@@ -167,13 +168,15 @@ const Register = (props) => {
 	setIsLoading(true);
 	createUserWithEmailAndPassword(auth, values.emailAddress, values.password).then((userCredential) => {
     	const user = userCredential.user;
-        console.log(user);
         registerAndUpload(values);
   	}).catch((error) => {
-    		const errorCode = error.code;
-    		const errorMessage = error.message;
+    	const errorCode = error.code;
+    	const errorMessage = error.message;
 		setIsLoading(false);
-		openNotification("Failed", "Student registration is failed (" + errorCode + "): " + errorMessage);
+		openNotification(
+            "Failed", 
+            "Student registration is failed (" + errorCode + "): " + errorMessage
+        );
   	});
   } 
 
@@ -191,7 +194,7 @@ const Register = (props) => {
   return (
 	<>
 		{contextHolder}
-	  	<div class="bg">	
+	  	<div className="bg">	
 	  		<Typography>
 				<Title>{"Bright Boost - Student Registration"}</Title>
 	  		</Typography>
@@ -218,9 +221,7 @@ const Register = (props) => {
                     label="Password"
                     className="form-group"
                     name="password"
-                    rules={[
-                        { required: true, message: "Please enter the password!" },
-                    ]}
+                    rules={[{ required: true, message: "Please enter the password!" }]}
                 >
                         <Input.Password />
                 </Form.Item>
@@ -260,9 +261,7 @@ const Register = (props) => {
                     label="Last Name"	
                     className="form-group"
                     name="lastName"
-                    rules={[
-                        { required: true, message: "Please input your last name" },
-                    ]}
+                    rules={[{ required: true, message: "Please input your last name" }]}
                 >
                     <Input />
                 </Form.Item>
@@ -282,9 +281,7 @@ const Register = (props) => {
                     label="Gender"
                     className="form-group"
                     name="gender"
-                    rules={[
-                        { required: true, message: "Please input your gender" },
-                    ]}
+                    rules={[{ required: true, message: "Please input your gender" }]}
                 >
                     <Radio.Group>
 	  					<Radio value="F">Female</Radio>
@@ -297,9 +294,7 @@ const Register = (props) => {
                     label="Phone Number"
                     className="form-group"	
                     name="phoneNumber"
-                    rules={[
-                        { required: true, message: "Please enter the phone number!" },
-                    ]}
+                    rules={[{ required: true, message: "Please enter the phone number!" }]}
                 >
                     <Input />
                 </Form.Item>
@@ -312,30 +307,18 @@ const Register = (props) => {
                     <Input />
                 </Form.Item>		
 			
-				<Form.Item
-                    label="City"
-                    className="form-group"
-                    name="city"
-                >
+				<Form.Item label="City" className="form-group" name="city">
                     <Input />
                 </Form.Item>
 
-	  			<Form.Item
-                    label="Country"
-                    className="form-group"	
-                    name="country"
-                >
+	  			<Form.Item label="Country" className="form-group" name="country">
                     <Select placeholder="Please select a country">
         				<Select.Option value="Australia">Australia</Select.Option>
        					<Select.Option value="Other">Other</Select.Option>
       				</Select>		
                 </Form.Item>	
 
-	  			<Form.Item
-                    label="Postal code"
-	  				className="form-group"	
-                    name="postalCode"          		
-				>
+	  			<Form.Item label="Postal code" className="form-group" name="postalCode">
                     <Input />
                 </Form.Item>	
                 
@@ -375,6 +358,6 @@ const Register = (props) => {
 	  	</div>
 	  </>
   );
-}
+};
 
-  export default Register;
+export default Register;

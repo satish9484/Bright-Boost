@@ -5,7 +5,6 @@ export const toAbsoluteUrl = (pathname) => process.env.PUBLIC_URL + pathname;
 
 // Fun used for setting up the common header for axios through out the app and rehydrate the redux store
 export const setupAxios = (axios, store) => {
-
   const token = JSON.parse(localStorage.getItem(LS_AUTHTOKEN));
   const userData = JSON.parse(localStorage.getItem(LS_USER));
 
@@ -49,7 +48,7 @@ export const decrypt = (param) => {
   else return "";
 };
 
-// Debouncing for input search 
+// Debouncing for input search
 export const debounce = (func) => {
   let timer;
   return function (...args) {

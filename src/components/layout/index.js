@@ -1,12 +1,12 @@
 import { Layout } from "antd";
 import { Outlet } from "react-router-dom";
 import AppHeader from "./header";
-import "./style.scss";
 import Sidebar from "./Sidebar";
+import "./style.scss";
 
 const { Content } = Layout;
 
-const PageLayout = (props) => {
+const PageLayout = () => {
   return (
     <Layout>
       <Sidebar />
@@ -16,7 +16,6 @@ const PageLayout = (props) => {
         </div>
         <Content>
           <div className="content-body">
-            {/* <div className="content-wrap" ref={props.setContainer}> */}
             <div className="content-wrap">
               <Outlet />
             </div>
