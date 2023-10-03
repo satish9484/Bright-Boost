@@ -56,7 +56,7 @@ const Schedule = () => {
 	return (
 		<div>
 			<div>
-				<h2>
+				<h2 className="tutor-info">
 					{tutorName} - {tutorSubject}
 				</h2>
 			</div>
@@ -77,7 +77,11 @@ const Schedule = () => {
 					);
 				})}
 			</div>
-			<button onClick={updateAvailbility}>Submit my Availability</button>
+			<div className="button-container">
+				<button className="button-submit" onClick={updateAvailbility}>
+					Submit my Availability
+				</button>
+			</div>
 		</div>
 	);
 };

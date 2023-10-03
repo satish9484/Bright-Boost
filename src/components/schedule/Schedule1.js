@@ -67,37 +67,10 @@ const Schedule1 = () => {
 			console.log(data[0]);
 			data.forEach((doc) => {
 				console.log(doc);
-				// console.log(`${doc.id} => ${doc.availabilityData[0].date}`);
-				// console.log(`${doc.id} => ${doc.availabilityData[0].available}`);
-				// console.log(`${doc.id} => ${doc.name}`);
-				// console.log(`${doc.id} => ${doc.email}`);
 			});
 		};
 		fetchData();
 	}, []); // Run once on component mount
-
-	const toggleAvailability = async (date) => {
-		console.log(date + " availabilty data line 75");
-		// console.log(available + " availabilty data line 75");
-
-		// const updatedAvailabilityData = availabilityData.map((day) => {
-		// 	console.log(day + date + " = line 78");
-		// 	console.log(day.availabilityData);
-		// 	if (day.availabilityData.date == date) {
-		// 		return { ...day, available: !day.available };
-		// 	}
-		// 	// console.log(day);
-
-		// 	return day;
-		// });
-		console.log(" updatedAvailabilityData line 86");
-		// console.log(updatedAvailabilityData[0]);
-		// Update availability data in Firestore
-		// await updateAvailabilityDataInFirestore(updatedAvailabilityData);
-		console.log("updated availbility line 82");
-
-		// setAvailabilityData(updatedAvailabilityData);
-	};
 
 	const renderCalendar = () => {
 		const startDate = new Date(); // You can set the start date based on your requirements
@@ -163,30 +136,6 @@ const Schedule1 = () => {
 	);
 };
 
-// const navigate = useNavigate();
-
-// useEffect(() => {
-// 	fetchData();
-// }, []);
-
-// const createFormRef = React.createRef();
-
-// const [api, contextHolder] = notification.useNotification();
-
-// const queryResult = [];
-// const [dataSource, setDataSource] = useState([]);
-// const [isLoading, setIsLoading] = useState(true);
-// const userPushed = {};
-// var numUserPushed = 0;
-// const orderPushed = {};
-
-// const openNotification = (notifTitle, notifContent) => {
-// 	api.open({
-// 		message: notifTitle,
-// 		description: notifContent,
-// 	});
-// };
-
 //create a new schedule for a  tutor
 const handleCreate = async () => {
 	try {
@@ -235,82 +184,5 @@ const handleCreate = async () => {
 		console.error("Error adding document: ", e);
 	}
 };
-
-// async function fetchData() {
-// 	await getDocs(query(collection(db, "margarita_test"))).then(
-// 		async (userQuerySnapshot) => {
-// 			if (queryResult.length == 0) {
-// 				userQuerySnapshot.forEach(async (user) => {
-// 					var userOrdersList = [];
-// 					const orderQuery = query(
-// 						collection(db, "margarita_test_2"),
-// 						where("user_id", "==", user.id)
-// 					);
-// 					await getDocs(orderQuery).then(async (orderQuerySnapshot) => {
-// 						orderQuerySnapshot.forEach((order) => {
-// 							if (!orderPushed[order.id]) {
-// 								userOrdersList.push({
-// 									// id: order.id
-// 									order_no: order.data().order_no,
-// 									address: order.data().address,
-// 									amount: order.data().amount,
-// 								});
-// 							}
-// 							orderPushed[order.id] = 1;
-// 						});
-// 						if (!userPushed[user.id]) {
-// 							queryResult.push({
-// 								id: user.id,
-// 								name: user.data().name,
-// 								email: user.data().email,
-// 								orders: userOrdersList,
-// 								numOrders: userOrdersList.length,
-// 							});
-// 							userPushed[user.id] = 1;
-// 							numUserPushed++;
-// 							// console.log(userQuerySnapshot.docs.length);
-// 							if (numUserPushed == userQuerySnapshot.docs.length) {
-// 								setDataSource(queryResult);
-// 								setIsLoading(false);
-// 								// console.log(queryResult);
-// 								// console.log(dataSrc);
-// 								// console.log(isLoading);
-// 							}
-// 						}
-// 					});
-// 				});
-// 			}
-// 		}
-// 	);
-// }
-
-//👇🏻 Logs the user's schedule to the console after setting the availability
-// const handleSaveSchedules = () => {
-// 	if (JSON.stringify(selectedTimezone) !== "{}") {
-// 		console.log(schedule);
-// 	} else {
-// 		toast.error("Select your timezone");
-// 	}
-// };
-
-// // tutor schedule
-// const [schedule, setSchedule] = useState([
-// 	{ day: "Mon", startTime: "", endTime: "" },
-// 	{ day: "Tue", startTime: "", endTime: "" },
-// 	{ day: "Wed", startTime: "", endTime: "" },
-// 	{ day: "Thu", startTime: "", endTime: "" },
-// 	{ day: "Fri", startTime: "", endTime: "" },
-// 	{ day: "Sat", startTime: "", endTime: "" },
-// 	{ day: "Sun", startTime: "", endTime: "" },
-// ]);
-
-// //👇🏻 This updates the schedule array with the start and end time.
-// const handleTimeChange = (e, id) => {
-// 	const { name, value } = e.target;
-// 	if (value === "Select") return;
-// 	const list = [...schedule];
-// 	list[id][name] = value;
-// 	setSchedule(list);
-// };
 
 export default Schedule1;
