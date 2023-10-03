@@ -37,6 +37,7 @@ import {
 	collection,
 	getDocs,
 	doc,
+	setDoc,
 	addDoc,
 	updateDoc,
 	deleteDoc,
@@ -54,7 +55,7 @@ const Schedule1 = () => {
 	useEffect(() => {
 		//fetch from DB
 		const fetchData = async () => {
-			const querySnapshot = await getDocs(collection(db, "margarita-test"));
+			const querySnapshot = await getDocs(collection(db, "Bright-Boost"));
 			const data = querySnapshot.docs.map((doc) => {
 				// const id = doc.id; это дает айди из средней таблицы
 				const restOfData = doc.data();
@@ -189,42 +190,45 @@ const Schedule1 = () => {
 //create a new schedule for a  tutor
 const handleCreate = async () => {
 	try {
-		const docRef = await addDoc(collection(db, "margarita-test"), {
-			name: "John",
-			email: "tutor@gmail.com",
-			availabilityData: [
-				{ date: "October 1, 2023", available: true },
-				{ date: "October 2, 2023", available: true },
-				{ date: "October 3, 2023", available: false },
-				{ date: "2023-10-04", available: true },
-				{ date: "2023-10-05", available: true },
-				{ date: "2023-10-06", available: false },
-				{ date: "2023-10-07", available: true },
-				{ date: "2023-10-08", available: true },
-				{ date: "2023-10-09", available: true },
-				{ date: "2023-10-10", available: false },
-				{ date: "2023-10-11", available: true },
-				{ date: "2023-10-12", available: true },
-				{ date: "2023-10-13", available: true },
-				{ date: "2023-10-14", available: true },
-				{ date: "2023-10-15", available: true },
-				{ date: "2023-10-16", available: true },
-				{ date: "2023-10-17", available: true },
-				{ date: "2023-10-18", available: false },
-				{ date: "2023-10-19", available: true },
-				{ date: "2023-10-20", available: true },
-				{ date: "2023-10-21", available: true },
-				{ date: "2023-10-22", available: true },
-				{ date: "2023-10-23", available: true },
-				{ date: "2023-10-24", available: true },
-				{ date: "2023-10-25", available: true },
-				{ date: "2023-10-26", available: true },
-				{ date: "2023-10-27", available: true },
-				{ date: "2023-10-28", available: true },
-				{ date: "2023-10-29", available: true },
-				{ date: "2023-10-30", available: true },
-				{ date: "2023-10-31", available: true },
-			],
+		const docRef = await setDoc(doc(db, "Bright-Boost", "tutorsAvailability"), {
+			tutorAvailability: {
+				name: "John",
+				email: "tutor@gmail.com",
+				subject: "English",
+				availabilityData: [
+					{ date: "1 October, 2023", available: false },
+					{ date: "2 October, 2023", available: true },
+					{ date: "3 October, 2023", available: true },
+					{ date: "4 October, 2023", available: true },
+					{ date: "5 October, 2023", available: true },
+					{ date: "6 October, 2023", available: true },
+					{ date: "7 October, 2023", available: false },
+					{ date: "8 October, 2023", available: false },
+					{ date: "9 October, 2023", available: true },
+					{ date: "10 October, 2023", available: true },
+					{ date: "11 October, 2023", available: true },
+					{ date: "12 October, 2023", available: true },
+					{ date: "13 October, 2023", available: true },
+					{ date: "14 October, 2023", available: false },
+					{ date: "15 October, 2023", available: false },
+					{ date: "16 October, 2023", available: true },
+					{ date: "17 October, 2023", available: true },
+					{ date: "18 October, 2023", available: true },
+					{ date: "19 October, 2023", available: true },
+					{ date: "20 October, 2023", available: true },
+					{ date: "21 October, 2023", available: false },
+					{ date: "22 October, 2023", available: false },
+					{ date: "23 October, 2023", available: true },
+					{ date: "24 October, 2023", available: true },
+					{ date: "25 October, 2023", available: true },
+					{ date: "26 October, 2023", available: true },
+					{ date: "27 October, 2023", available: true },
+					{ date: "28 October, 2023", available: false },
+					{ date: "29 October, 2023", available: false },
+					{ date: "30 October, 2023", available: true },
+					{ date: "31 October, 2023", available: true },
+				],
+			},
 		});
 		console.log("Document written with ID: ", docRef.id);
 	} catch (e) {
