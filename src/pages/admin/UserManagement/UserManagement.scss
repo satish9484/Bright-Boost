@@ -1,8 +1,7 @@
-@import "../../scss/variable";
-@import "../../scss/mixin";
+@import "../../../scss/variable";
+@import "../../../scss/mixin";
 
 .user-management {
-
   .verification {
     display: inline-block;
     padding: 8px 16px;
@@ -22,7 +21,7 @@
 
 .ant-switch-checked {
   background-color: #757575;
-  
+
   &:focus {
     box-shadow: none;
   }
@@ -31,7 +30,7 @@
 .editUserManagement {
   .label {
     color: $white;
-     font-size: 14px;
-     margin-bottom: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
   }
 }

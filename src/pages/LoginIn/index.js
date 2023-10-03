@@ -55,6 +55,10 @@ const LoginIn = () => {
 
         navigate("/dashboard");
         const uid = userCredential.user.uid;
+	
+	/* as we will be using firestore database for all information, including the role information, this part will soon be replace */
+	/* START */
+	/*
         try {
           const userRef = ref(database, `users/${uid}`);
           const snapshot = await get(userRef);
@@ -77,6 +81,8 @@ const LoginIn = () => {
         // const user = userCredential.user;
         // console.log("User login  " + Object.entries(user));
         // // navigate("/");
+	*/
+	/* END */
       })
       .catch((error) => {
         const errorCode = error.code;

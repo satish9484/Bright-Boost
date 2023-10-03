@@ -468,7 +468,7 @@ p {
 
 .ant-form-item-label {
   label {
-    color: $white;
+    color: $white !important;
   }
 }
 
@@ -756,5 +756,15 @@ p {
     }
   }
 }
+
+@include responsive(xs) {
+  :where(.css-dev-only-do-not-override-18iikkb).ant-form-vertical
+    .ant-form-item-row {
+    flex-direction: unset;
+  }
+}
+
+// :where(.css-dev-only-do-not-override-18iikkb).ant-form-vertical .ant-form-item-row {
+// flex-direction: unset;
 
 // Responsive css over
