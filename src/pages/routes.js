@@ -15,6 +15,9 @@ import SessionRegistration from "./student/sessionRegistration/index";
 
 // tutor
 import OrganizeAvability from "./tutor/organizeAvailability/index";
+import SessionQA from "./tutor/sessionQA/index";
+import NewSessionQA from "./tutor/sessionQA/new";
+import EditSessionQA from "./tutor/sessionQA/edit";
 import { doc, getDoc } from "firebase/firestore";
 
 const LoginIn = lazy(() => import("./LoginIn"));
@@ -29,6 +32,7 @@ const AdminDashboard = lazy(() => import("./admin/Dashboard/index"));
 const StudentDashboard = lazy(() => import("./student/Dashboard/index"));
 const TutorDashboard = lazy(() => import("./tutor/Dashboard/index"));
 const MyProfile = lazy(() => import("./MyProfile"));
+
 const EditProfile = lazy(() => import("./MyProfile/EditProfile"));
 const ChangePassword = lazy(() => import("./MyProfile/ChangePassword"));
 const UserManagement = lazy(() => import("./admin/UserManagement"));
@@ -200,12 +204,24 @@ const Routing = () => {
             path="/tutor/organizeavailability"
             element={<OrganizeAvability />}
           />
+          <Route
+            path="/tutor/session-qa"
+            element={<SessionQA />}
+          />
+          <Route
+            path="/tutor/session-qa/new"
+            element={<NewSessionQA />}
+          />
+          <Route
+            path="/tutor/session-qa/edit"
+            element={<EditSessionQA />}
+          />
         </Route>
       ) : (
         "login Rout"
       )}
-
-      <Route path="*" element={<Navigate replace to="/" />} />
+      {/* Unfortunately I have to make comment of the below line to test my codes, otherwise it keeps returning to the Dashboard */}
+      {/* <Route path="*" element={<Navigate replace to="/" />} /> */}
     </Routes>
   );
 };

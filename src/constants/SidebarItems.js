@@ -80,6 +80,13 @@ export const tutorSidebarItems = [
       <UserICon />
     </Link>
   ),
+  getItem(
+    "Session Q&As",
+    "session-qa",
+    <Link to="/tutor/session-qa">
+      <UserICon />
+    </Link>
+  ),
   // getItem("Car Management", "car management", <Union />, [
   //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
   //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
