@@ -142,7 +142,7 @@ const UserManagement = () => {
           <div className="d-flex">
             <div className="mar-right-8 cPointer">
               {" "}
-              <Link to="/userManagement/edit">
+              <Link to="/admin/userManagement/edit">
                 <EditOutlined style={{ fontSize: "20px", color: "black" }} />
               </Link>
             </div>
@@ -303,7 +303,13 @@ const UserManagement = () => {
     <>
       <BreadCrumbs list={list} />
       <div className="user-management shadow-paper auto-height">
-        <Row gutter={[{ xs: 0, sm: 0 }, { xs:12,sm: 12 }]} className="mar-bottom-20">
+        <Row
+          gutter={[
+            { xs: 0, sm: 0 },
+            { xs: 12, sm: 12 },
+          ]}
+          className="mar-bottom-20"
+        >
           <Col xl={12} lg={8} md={16} sm={24}>
             <div className="searchGrp">
               <Search
@@ -316,7 +322,9 @@ const UserManagement = () => {
           </Col>
           <Col xl={12} lg={16} md={8} sm={24}>
             <Row justify="end">
-              <Button type="primary">Add</Button>
+              <Button type="primary">
+                <Link to="/admin/userManagement/add">Add</Link>
+              </Button>
             </Row>
           </Col>
         </Row>
