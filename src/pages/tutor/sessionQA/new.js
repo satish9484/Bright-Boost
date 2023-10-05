@@ -39,7 +39,10 @@ const NewSessionQA = () => {
     const topic = values.topic;
     const details = values.details;
     const questionStartDateTime = moment(values.questionStartDateTime.toString());
-    const questionEndDateTime = moment(values.questionEndDateTime.toString());
+    var questionEndDateTime = undefined;
+    if (values.questionEndDateTime && values.questionEndDateTime != "") {
+        questionEndDateTime = moment(values.questionEndDateTime.toString());
+    }
     const status = values.status;
 
     var durationInSeconds = -1; // -1 means unanswered or not fully answered, so not able to measure duration
@@ -60,7 +63,7 @@ const NewSessionQA = () => {
                 topic : topic,
                 details : details,
                 questionStartDateTime : questionStartDateTime.toDate(),
-                questionEndDateTime : questionEndDateTime.toDate(),
+                questionEndDateTime : questionEndDateTime == undefined ? "" : questionEndDateTime.toDate(),
                 status : status,
                 answerer: answerer,
                 durationInSeconds: durationInSeconds

@@ -213,7 +213,7 @@ const Routing = () => {
             element={<NewSessionQA />}
           />
           <Route
-            path="/tutor/session-qa/edit"
+            path="/tutor/session-qa/edit/:id"
             element={<EditSessionQA />}
           />
         </Route>
