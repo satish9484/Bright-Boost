@@ -12,8 +12,10 @@ import { collection, getDocs, doc, setDoc, addDoc, updateDoc, deleteDoc, query, 
 import moment from "moment";
 
 const { Title, Paragraph, Text } = Typography;
+import { useLocation, Link } from "react-router-dom";
 
 const SessionQA = () => {
+    const { state } = useLocation();
     const queryResult = {};
     const queryResultLength = {};
     const [QA, setQA] = useState({});
@@ -43,11 +45,11 @@ const SessionQA = () => {
                                             const questionEndDateTime = new Date(QAArray.data()[subjects[j]][i].questionEndDateTime.toMillis());
                                             description += "; Answer finalised at: " + moment(questionEndDateTime).format("D MMMM YYYY HH:mm:ss");
                                         }
+                                        const QAUrl = "session-qa/edit/" + QAArray.data()[subjects[j]][i].id;
                                         if (QAArray.data()[subjects[j]][i].status == "Answered") {
                                             const durationHours = Math.floor(QAArray.data()[subjects[j]][i].durationInSeconds / 3600);
                                             const durationMinutes = Math.floor((QAArray.data()[subjects[j]][i].durationInSeconds - durationHours * 3600) / 60);
                                             const durationSeconds = QAArray.data()[subjects[j]][i].durationInSeconds - durationHours * 3600 - durationMinutes * 60;
-                                            const QAUrl = "";
                                             meta = <List.Item.Meta
                                             avatar={<Avatar src={`https://firebasestorage.googleapis.com/v0/b/placement-app-862af.appspot.com/o/Green-check-mark-icon.png?alt=media&token=de553e4c-5ad9-46c1-8bb9-0d4d2f58356f&_gl=1*av95ji*_ga*MTIyMDk0MDYzOC4xNjk2NDAwMjAw*_ga_CW55HF8NVT*MTY5NjQ3NjQ5OS40LjEuMTY5NjQ3NzMyMS4zLjAuMA..`} />}
                                             title={<a href={QAUrl}>{QAArray.data()[subjects[j]][i].topic}</a>}
@@ -56,7 +58,7 @@ const SessionQA = () => {
                                         }
                                         else {
                                             meta = <List.Item.Meta
-                                            title={<a href="session-qa/edit">{QAArray.data()[subjects[j]][i].topic}</a>}
+                                            title={<a href={QAUrl}>{QAArray.data()[subjects[j]][i].topic}</a>}
                                             description={description} />;
                                         }
                                         queryResult[subjects[j]].push({
