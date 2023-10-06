@@ -1,60 +1,92 @@
 import { Layout, Menu } from "antd";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { toAbsoluteUrl } from "../../../utils";
+import React, { useContext, useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import {
-  LayoutCollapsed,
-  LayoutUnCollapsed,
-  UserICon,
-  Union,
-} from "../../../svg";
+  adminSidebarItems,
+  studentSidebarItems,
+  tutorSidebarItems,
+} from "../../../constants/SidebarItems";
+import { toAbsoluteUrl } from "../../../utils";
+import { LayoutCollapsed, LayoutUnCollapsed } from "../../../svg";
 
-function getItem(label, key, icon, children) {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  };
-}
+import { db } from "../../../firebase/firebase";
+import { AuthContext } from "../../../context/AuthContext";
 
-const items = [
-  getItem(
-    "Dashboard",
-    "dashboard",
-    <Link to="/dashboard">
-      <Union />
-    </Link>
-  ),
-  getItem(
-    "User Management",
-    "user-management",
-    <Link to="/userManagement">
-      <UserICon />
-    </Link>
-  ),
-  // getItem("Car Management", "car management", <Union />, [
-  //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
-  //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
-  // ]),
-];
-console.log("items: ", items);
+const COLLECTION_NAME = "Bright-Boost";
+const DOCUMENT_ID = "users";
 
-const currentActiveKey = () => {
-  let result = "dashboard";
+// Function to fetch a user's role by email
+const fetchUserRoleByEmail = async (email) => {
+  try {
+    // Reference to the user document
+    const userDocRef = doc(db, COLLECTION_NAME, DOCUMENT_ID);
+    const userDocSnapshot = await getDoc(userDocRef);
 
-  for (let index = 0; index < items.length; index++) {
-    const element = items[index];
-    if (window.location.pathname.includes(element.key)) {
-      result = element.key;
-      return result;
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
+      const roleArray = userData.role || [];
+
+      const userDetails = roleArray.find((entry) => entry.email === email);
+
+      if (userDetails) {
+        const userRoleName = userDetails.userRole;
+        return userRoleName;
+      } else {
+        throw new Error(`User with email ${email} not found.`);
+      }
+    } else {
+      throw new Error("Document does not exist.");
     }
+  } catch (error) {
+    console.error("Error fetching user role:", error);
+    throw error;
   }
 };
 
 const Sidebar = () => {
   const { Sider } = Layout;
+  const { currentUser } = useContext(AuthContext);
+
+  const [current, setCurrent] = useState("dashboard");
   const [collapsed, setCollapsed] = useState(false);
+  const [items, setItems] = useState([]);
+
+  // const currentActiveKey = () => {
+  //   let result = "dashboard";
+
+  //   for (let index = 0; index < items.length; index++) {
+  //     const element = items[index];
+  //     if (window.location.pathname.includes(element.key)) {
+  //       result = element.key;
+  //       return result;
+  //     }
+  //   }
+  // };
+
+  useEffect(() => {
+    if (currentUser?.email) {
+      fetchUserRoleByEmail(currentUser?.email)
+        .then((userRoleName) => {
+          // console.log(`User role for ${currentUser?.email}: ${userRoleName}`);
+
+          if (userRoleName === "admin") {
+            setItems(adminSidebarItems);
+          } else if (userRoleName === "student") {
+            setItems(studentSidebarItems);
+          } else if (userRoleName === "tutor") {
+            setItems(tutorSidebarItems);
+          }
+        })
+        .catch((error) => {
+          console.error("Failed to fetch user role:", error);
+        });
+    }
+  }, [currentUser?.email]);
+
+  const onClick = (e) => {
+    console.log(e.key);
+    setCurrent(e.key);
+  };
 
   return (
     <Sider
@@ -79,7 +111,14 @@ const Sidebar = () => {
           alt="logo"
         />
       </figure>
-      <Menu mode="inline" selectedKeys={[currentActiveKey()]} items={items} />
+      <Menu
+        mode="inline"
+        onClick={onClick}
+        openKeys={["dashboard"]}
+        selectedKeys={[current]}
+        items={items}
+        theme="dark"
+      />
     </Sider>
   );
 };
