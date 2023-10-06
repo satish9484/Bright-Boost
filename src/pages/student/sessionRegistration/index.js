@@ -52,6 +52,7 @@ const SessionRegistration = () => {
     tutorsBySubject[initialStudentData.subject] || []
   );
 
+  // Function to handle form submission
   const handleFinish = async (values) => {
     try {
       const selectedMoment = moment(values?.date);
@@ -88,6 +89,7 @@ const SessionRegistration = () => {
     }
   };
 
+  // Function to disable dates in the past and future
   const disabledDate = (current) => {
     return (
       (current && current < moment().startOf("day")) ||
@@ -95,10 +97,12 @@ const SessionRegistration = () => {
     );
   };
 
+  // Function to handle date change
   const handleDateChange = (date, dateString) => {
     setSelectedDate(dateString);
   };
 
+  // Function to handle subject selection
   const handleSubjectChange = (value) => {
     if (value in tutorsBySubject) {
       setTutorListForSubject(tutorsBySubject[value]);
