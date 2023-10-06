@@ -9,9 +9,7 @@ import "./style.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <
-    
-  >
+  <>
     <ToastContainer
       position="top-right"
       autoClose={2000}

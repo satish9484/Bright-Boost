@@ -77,4 +77,11 @@ export const tutorSidebarItems = [
       <UserICon />
     </Link>
   ),
+  getSidebarItem(
+    "Schedule",
+    "schedule",
+    <Link to="/tutor/schedule">
+      <UserICon />
+    </Link>
+  ),
 ];

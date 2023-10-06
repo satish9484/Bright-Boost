@@ -16,6 +16,7 @@ import SessionRegistration from "./student/SessionRegistration/index";
 
 // Importing tutor route components
 import OrganizeAvailability from "./tutor/organizeAvailability/index";
+import Schedule from "./tutor/Schedule/index.js";
 
 import { doc, getDoc } from "firebase/firestore";
 
@@ -84,7 +85,7 @@ const Routing = () => {
         });
     }
   }, [currentUser?.email]);
-	// const [container, setContainer] = useState(null);
+  // const [container, setContainer] = useState(null);
 
   return (
     <Routes>
@@ -185,6 +186,7 @@ const Routing = () => {
                   path="/tutor/organizeavailability"
                   element={<OrganizeAvailability />}
                 />
+                <Route path="/tutor/schedule" element={<Schedule />} />
               </Route>
             ) : (
               // Handle unknown roles here or redirect to an error page
@@ -209,32 +211,6 @@ const Routing = () => {
       )}
     </Routes>
   );
-	return (
-		<Routes>
-			<Route path="/" element={<Navigate replace to="/login" />} />
-			<Route path="/login" element={<LoginIn />} />
-			<Route path="/forgotpassword" element={<ForgotPassword />} />
-			<Route path="/resetpassword" element={<ResetPassword />} />
-			<Route
-				path="/"
-				// element={<Layout setContainer={setContainer} container={container} />}
-				element={<Layout />}
-			>
-				<Route path="/" element={<Navigate replace to="/dashboard" />} />
-				<Route path="/dashboard" element={<Dashboard />} />
-				<Route path="/myprofile" element={<MyProfile />} />
-				<Route path="/myprofile/edit" element={<EditProfile />} />
-				<Route path="/myprofile/changepassword" element={<ChangePassword />} />
-				<Route path="/myprofile" element={<MyProfile />} />
-				<Route path="/myprofile/edit" element={<EditProfile />} />
-				<Route path="/myprofile/changepassword" element={<ChangePassword />} />
-				<Route path="/userManagement" element={<UserManagement />} />
-				<Route path="/userManagement/edit" element={<EditUserManagement />} />
-				<Route path="/tutor/schedule" element={<Schedule />} />
-			</Route>
-			<Route path="*" element={<Navigate replace to="/" />} />
-		</Routes>
-	);
 };
 
 export default Routing;
