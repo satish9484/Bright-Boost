@@ -3,7 +3,7 @@ import { Button, Form, Input, Skeleton, Typography, notification, DatePicker, Ra
 
 import "./style.scss";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage"
 import { db, storage } from "../../firebase/firebase";
 import { doc, updateDoc, arrayUnion } from "firebase/firestore";
@@ -158,10 +158,10 @@ const Register = (props) => {
             subjectsEnrolled: values.subjectsEnrolled
         })
     }).then(() => {
-        window.setTimeout(function () {
-            navigate("/");
-            openNotification("Success", "Student registration is successful");
-        }, 1000);
+        openNotification("Success", "Student registration is successful");
+        signOut(auth).then(() => {
+            navigate("/login");
+        }).catch((error) => {});
     });
   }
 
