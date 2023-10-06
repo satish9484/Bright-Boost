@@ -1,10 +1,9 @@
 import React, { useContext, useState } from "react";
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { toast } from "react-toastify";
-import { Button, DatePicker, Form, Select, ConfigProvider } from "antd";
-import moment from "moment";
 import { AuthContext } from "../../../context/AuthContext";
 import { db } from "../../../firebase/firebase";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import moment from "moment";
+import { Button, DatePicker, Form, Select, ConfigProvider } from "antd";
 import BreadCrumbs from "../../../components/common/Breadcrumbs";
 import Card from "../../../components/common/Card";
 
@@ -83,10 +82,9 @@ const SessionRegistration = () => {
         await setDoc(docRef, dataToSet);
       }
 
-      toast.success("Student record added successfully!");
+      console.log("Student record added successfully!");
     } catch (error) {
       console.error("Error adding student record: ", error);
-      toast.error(error);
     }
   };
 

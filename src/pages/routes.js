@@ -12,7 +12,7 @@ import TutorAvailability from "./admin/TutorAvailability/index";
 import SessionArrangement from "./admin/SessionArrangement/index";
 
 // Importing student route components
-import SessionRegistration from "./student/SessionRegistration/index";
+import SessionRegistration from "./student/SessionRegistration";
 
 // Importing tutor route components
 import OrganizeAvailability from "./tutor/organizeAvailability/index";
