@@ -6,13 +6,6 @@ import {
   studentSidebarItems,
   tutorSidebarItems,
 } from "../../../constants/SidebarItems";
-import React, { useContext, useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import {
-  adminSidebarItems,
-  studentSidebarItems,
-  tutorSidebarItems,
-} from "../../../constants/SidebarItems";
 import { toAbsoluteUrl } from "../../../utils";
 import { LayoutCollapsed, LayoutUnCollapsed } from "../../../svg";
 import { db } from "../../../firebase/firebase";
