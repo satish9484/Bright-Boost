@@ -64,9 +64,9 @@ const LoginIn = () => {
             userRoleName === "admin"
               ? navigate("/admin/dashboard")
               : userRoleName === "student"
-              ? navigate("student/dashboard")
+              ? navigate("/student/dashboard")
               : userRoleName === "tutor"
-              ? navigate("tutor/dashboard")
+              ? navigate("/tutor/dashboard")
               : navigate("/dashboard");
           })
           .catch((error) => {

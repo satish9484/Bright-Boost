@@ -6,9 +6,15 @@ import {
   studentSidebarItems,
   tutorSidebarItems,
 } from "../../../constants/SidebarItems";
+import React, { useContext, useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import {
+  adminSidebarItems,
+  studentSidebarItems,
+  tutorSidebarItems,
+} from "../../../constants/SidebarItems";
 import { toAbsoluteUrl } from "../../../utils";
 import { LayoutCollapsed, LayoutUnCollapsed } from "../../../svg";
-
 import { db } from "../../../firebase/firebase";
 import { AuthContext } from "../../../context/AuthContext";
 
@@ -51,31 +57,22 @@ const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState([]);
 
-  // const currentActiveKey = () => {
-  //   let result = "dashboard";
-
-  //   for (let index = 0; index < items.length; index++) {
-  //     const element = items[index];
-  //     if (window.location.pathname.includes(element.key)) {
-  //       result = element.key;
-  //       return result;
-  //     }
-  //   }
-  // };
-
   useEffect(() => {
     if (currentUser?.email) {
       fetchUserRoleByEmail(currentUser?.email)
         .then((userRoleName) => {
-          // console.log(`User role for ${currentUser?.email}: ${userRoleName}`);
+          let sidebarItems = [];
 
+          // Determine which sidebar items to use based on user role
           if (userRoleName === "admin") {
-            setItems(adminSidebarItems);
+            sidebarItems = adminSidebarItems;
           } else if (userRoleName === "student") {
-            setItems(studentSidebarItems);
+            sidebarItems = studentSidebarItems;
           } else if (userRoleName === "tutor") {
-            setItems(tutorSidebarItems);
+            sidebarItems = tutorSidebarItems;
           }
+
+          setItems(sidebarItems);
         })
         .catch((error) => {
           console.error("Failed to fetch user role:", error);
@@ -84,7 +81,6 @@ const Sidebar = () => {
   }, [currentUser?.email]);
 
   const onClick = (e) => {
-    console.log(e.key);
     setCurrent(e.key);
   };
 
@@ -94,17 +90,12 @@ const Sidebar = () => {
       width="270px"
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
-      trigger={collapsed === true ? <LayoutUnCollapsed /> : <LayoutCollapsed />}
+      trigger={collapsed ? <LayoutUnCollapsed /> : <LayoutCollapsed />}
       reverseArrow={true}
       breakpoint="md"
     >
       <figure className="layout-logo">
         <p className="logo">BRIGHT BOOST</p>
-        {/* <img
-          className="logo"
-          src={toAbsoluteUrl("/images/logo-white.svg")}
-          alt="logo"
-        /> */}
         <img
           className="logo-icon"
           src={toAbsoluteUrl("/images/logo-icon.svg")}
@@ -114,7 +105,6 @@ const Sidebar = () => {
       <Menu
         mode="inline"
         onClick={onClick}
-        openKeys={["dashboard"]}
         selectedKeys={[current]}
         items={items}
         theme="dark"

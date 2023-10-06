@@ -1,0 +1,51 @@
+@import "../../../scss/variable";
+@import "../../../scss/mixin";
+// @import "react-big-calendar/lib/sass/styles";
+// @import "react-big-calendar/lib/addons/dragAndDrop/styles"; // if using DnD
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  padding: 30px;
+  border-radius: 10px;
+  border: 2px solid $primary;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tutor-info {
+  color: #001529;
+  font-size: 25px;
+  padding-bottom: 40px;
+}
+
+.calendar-cell {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.available {
+  background-color: #067518;
+  color: white;
+}
+
+.unavailable {
+  background-color: #c20b00;
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.button-submit {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 40px;
+  font-size: 1.5em;
+}
