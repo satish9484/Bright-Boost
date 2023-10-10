@@ -11,9 +11,9 @@ import { collection, getDocs, doc, setDoc, addDoc, updateDoc, deleteDoc, query, 
 import  { useNavigate } from 'react-router-dom';
 
 import moment from "moment";
+import { useLocation, Link } from "react-router-dom";
 
 const { Title, Paragraph, Text } = Typography;
-import { useLocation, Link } from "react-router-dom";
 
 const collectionId = "Bright-Boost";
 
