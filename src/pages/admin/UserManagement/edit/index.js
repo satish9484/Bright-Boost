@@ -1,7 +1,6 @@
-import { Button, Form, Image, Input, Switch, Upload, message } from "antd";
 import React from "react";
-import { Link } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
+import { Button, Form, Image, Input } from "antd";
+// import { v4 as uuidv4 } from "uuid";
 import {
   collection,
   doc,
@@ -14,17 +13,18 @@ import BreadCrumbs from "../../../../components/common/Breadcrumbs";
 import Card from "../../../../components/common/Card";
 import { db } from "../../../../firebase/firebase";
 import "../../UserManagement/UserManagement.scss";
-import { ProfileIcon } from "../../../../svg";
+import { Link } from "react-router-dom";
+// import { ProfileIcon } from "../../../../svg";
 
 const list = [
   {
     name: "User Management",
-    link: "/userManagement",
+    link: "/admin/userManagement",
     isActive: true,
   },
   {
     name: "Edit User Management",
-    link: "/userManagement/edit",
+    link: "/admin/userManagement/edit",
     isActive: false,
   },
 ];
@@ -78,20 +78,20 @@ const EditUserManagement = () => {
   const handleFinish = (values) => {
     console.log(values);
     // Data for the new student record
-    // const newStudentData = {
-    //   activeSubscription: "6months",
-    //   address: "2 First Street,Exp,Melbourne,VIC,3344",
-    //   dateOfBirth: "02/06/1995",
-    //   email: "abc@gmail.com",
-    //   gender: "Male",
-    //   imageURL:
-    //     "https://firebasestorage.googleapis.com/v0/b/placement-app-862af.appspot.com/o/Notification_Image%2F1614771609186.jpg?alt=media&token=51a91456-eb56-4b0c-ba93-08adc066c264",
-    //   name: "akshat",
-    //   phoneNumber: "04568789",
-    //   status: "active",
-    //   studentID: uuidv4(),
-    // };
-    // updateStudentRecord("45612366", newStudentData);
+    const newStudentData = {
+      activeSubscription: "6months",
+      address: "2 First Street,Exp,Melbourne,VIC,3344",
+      dateOfBirth: "02/06/1995",
+      email: "abc@gmail.com",
+      gender: "Male",
+      imageURL:
+        "https://firebasestorage.googleapis.com/v0/b/placement-app-862af.appspot.com/o/Notification_Image%2F1614771609186.jpg?alt=media&token=51a91456-eb56-4b0c-ba93-08adc066c264",
+      name: "akshat",
+      phoneNumber: "04568789",
+      status: "active",
+      studentID: "45612366",
+    };
+    updateStudentRecord("45612366", newStudentData);
   };
 
   return (
@@ -127,11 +127,9 @@ const EditUserManagement = () => {
 
               {/* Image */}
               <div className="col-12 d-flex justify-content-center">
-                {" "}
                 <Image
                   className="mar-bottom-10"
                   width={300}
-                  // src="https://firebasestorage.googleapis.com/v0/b/placement-app-862af.appspot.com/o/Notification_Image%2F1614771609186.jpg?alt=media&token=51a91456-eb56-4b0c-ba93-08adc066c264"
                   src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
                 />
               </div>
@@ -140,7 +138,7 @@ const EditUserManagement = () => {
               <div className="col-xl-6 col-md-8">
                 <Form.Item
                   className="form-group"
-                  label="Studnet Id"
+                  label="Student Id"
                   labelWrap={true}
                   name="studentID"
                 >
@@ -256,9 +254,10 @@ const EditUserManagement = () => {
                 </Form.Item>
               </div>
 
+              {/* Action Buttons */}
               <div className="col-xl-12 d-flex justify-content-end mar-top-8">
                 <Button className="mar-right-8">
-                  <Link to="/userManagement">Cancel</Link>
+                  <Link to="/admin/userManagement">Cancel</Link>
                 </Button>
                 <Button type="primary" htmlType="submit">
                   Save

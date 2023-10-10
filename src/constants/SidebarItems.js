@@ -1,86 +1,83 @@
 import { Link } from "react-router-dom";
 import { Union, UserICon } from "../svg";
 
-function getItem(label, key, icon, children) {
+// Helper function to create sidebar items
+function getSidebarItem(label, key, icon, link) {
   return {
     key,
     icon,
-    children,
     label,
+    link,
   };
 }
 
+// Sidebar items for admin
 export const adminSidebarItems = [
-  getItem(
+  getSidebarItem(
     "Dashboard",
     "dashboard",
     <Link to="/admin/dashboard">
       <Union />
     </Link>
   ),
-  getItem(
+  getSidebarItem(
     "User Management",
     "user-management",
     <Link to="/admin/userManagement">
       <UserICon />
     </Link>
   ),
-  getItem(
-    "TutorAvailability",
-    "tutoavailability",
-    <Link to="/admin/tutoavailability">
+  getSidebarItem(
+    "Tutor Availability",
+    "tutor-availability",
+    <Link to="/admin/tutoravailability">
       <UserICon />
     </Link>
-  ), getItem(
+  ),
+  getSidebarItem(
     "Session Arrangement",
-    "sessionarrangement",
+    "session-arrangement",
     <Link to="/admin/sessionarrangement">
       <UserICon />
     </Link>
   ),
-  // getItem("Car Management", "car management", <Union />, [
-  //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
-  //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
-  // ]),
 ];
 
+// Sidebar items for student
 export const studentSidebarItems = [
-  getItem(
+  getSidebarItem(
     "Dashboard",
     "dashboard",
-    <Link to="/studnet/dashboard">
+    <Link to="/student/dashboard">
       <Union />
     </Link>
   ),
-  getItem(
+  getSidebarItem(
     "Session Registration",
-    "sessionregistration",
+    "session-registration",
     <Link to="/student/sessionregistration">
       <UserICon />
     </Link>
   ),
-  // getItem("Car Management", "car management", <Union />, [
-  //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
-  //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
-  // ]),
 ];
 
+// Sidebar items for tutor
 export const tutorSidebarItems = [
-  getItem(
+  getSidebarItem(
     "Dashboard",
     "dashboard",
     <Link to="/tutor/dashboard">
       <Union />
     </Link>
   ),
-  getItem(
-    "Organize Avability",
-    "organizeavailability",
+  getSidebarItem(
+    "Organize Availability",
+    "organize-availability",
     <Link to="/tutor/organizeavailability">
       <UserICon />
     </Link>
   ),
-  getItem(
+  getSidebarItem(
     "Session Q&As",
     "session-qa",
     <Link to="/tutor/session-qa">
@@ -91,4 +88,11 @@ export const tutorSidebarItems = [
   //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
   //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
   // ]),
+  getSidebarItem(
+    "Schedule",
+    "schedule",
+    <Link to="/tutor/schedule">
+      <UserICon />
+    </Link>
+  ),
 ];
