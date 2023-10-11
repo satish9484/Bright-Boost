@@ -1,15 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "./style.scss";
 import { db } from "../../../firebase/firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import dayjs from "dayjs";
 import { Calendar } from "antd";
+import { AuthContext } from "../../../context/AuthContext";
 
 const Schedule = () => {
+	const { currentUser } = useContext(AuthContext);
+
 	const [value, setValue] = useState(() => dayjs("2023-10-01"));
 
-	//   //tutor email (should be unique for every tutor)
-	const tutorEmail = "tutor1gmailcom";
+	const [tutorEmail, setTutorEmail] = useState();
+
+	//sanitise tutor email
+	const removeSpecialCharacters = (email) => {
+		// Regular expression to remove all special characters
+		return email.replace(/[^a-zA-Z0-9]/g, "");
+	};
 
 	// tutor availability data as {DDMMYYYY: true/false}
 	const [availabilityData, setData] = useState([]);
@@ -26,14 +34,12 @@ const Schedule = () => {
 			const docRef = doc(db, "Bright-Boost", "tutorsAvailability");
 			const docSnap = await getDoc(docRef);
 			const availabilityData = docSnap.data();
-			const tutorData = availabilityData[tutorEmail];
-			console.log(tutorData);
+			const cleanedTutorEmail = removeSpecialCharacters(currentUser.email);
+			setTutorEmail(cleanedTutorEmail);
+			const tutorData = availabilityData[cleanedTutorEmail];
 			setSubject(tutorData.Subject);
-			console.log(tutorData.Subject);
 			setName(tutorData.Name);
-			console.log(tutorData.Name);
 			setData(tutorData.availabilityData);
-			console.log(tutorData.availabilityData);
 		};
 		fetchData();
 	}, []); // Run once on component mount
@@ -52,7 +58,7 @@ const Schedule = () => {
 			return "Unavailable (Weekend)";
 		}
 
-		return availability ? "Available" : "Unavailable";
+		return availability ? "Unavailable" : "Available";
 	};
 
 	//toggle availsbility on click
