@@ -35,6 +35,7 @@ const initialStudentData = {
 	date: "",
 	time: "",
 	inquiry: "",
+	answered: false,
 };
 
 const Helpline = () => {
@@ -59,6 +60,7 @@ const Helpline = () => {
 				time: currentTime,
 				tutor: values.tutor,
 				inquiry: inquryMessage,
+				answered: false,
 			};
 
 			if (docSnapshot.exists()) {
