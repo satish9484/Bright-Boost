@@ -49,3 +49,20 @@
   margin-top: 40px;
   font-size: 1.5em;
 }
+
+.tutor-info {
+	color: #001529;
+	font-size: 25px;
+}
+
+.button-container {
+	display: flex;
+	justify-content: center;
+}
+
+.button-submit {
+	border: 1px solid #ccc;
+	text-align: center;
+	cursor: pointer;
+	font-size: 1.5em;
+}

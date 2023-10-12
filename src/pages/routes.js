@@ -20,6 +20,7 @@ import NewSessionQA from "./tutor/sessionQA/new";
 import SessionQA from "./tutor/sessionQA/index";
 import EditSessionQA from "./tutor/sessionQA/edit";
 import Schedule from "./tutor/Schedule/index.js";
+import Statistics from "./admin/Statistics/index.js";
 
 import { doc, getDoc } from "firebase/firestore";
 
@@ -134,6 +135,10 @@ const Routing = () => {
                 <Route
                   path="/admin/sessionarrangement"
                   element={<SessionArrangement />}
+                />
+                <Route
+                  path="/admin/statistics"
+                  element={<Statistics />}
                 />
               </Route>
             ) : userRole === "student" ? (

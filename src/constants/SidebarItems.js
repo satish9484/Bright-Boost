@@ -41,6 +41,13 @@ export const adminSidebarItems = [
       <UserICon />
     </Link>
   ),
+  getSidebarItem(
+    "Statistics",
+    "statistics",
+    <Link to="/admin/statistics">
+      <UserICon />
+    </Link>
+  ),
 ];
 
 // Sidebar items for student
