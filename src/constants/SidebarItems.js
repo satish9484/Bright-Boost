@@ -9,14 +9,6 @@ function getSidebarItem(label, key, icon, link) {
     label,
     link,
   };
-// Helper function to create sidebar items
-function getSidebarItem(label, key, icon, link) {
-	return {
-		key,
-		icon,
-		label,
-		link,
-	};
 }
 
 // Sidebar items for admin
