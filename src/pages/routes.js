@@ -1,24 +1,27 @@
 import React, { lazy, useContext, useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import { Routes, Route, Navigate } from "react-router-dom";
-
 import AuthGuard from "../components/auth";
 import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase/firebase";
 
 // Importing admin route components
+
 import EditUserManagement from "./admin/UserManagement/edit";
 import AddUserManagement from "./admin/UserManagement/add";
 import TutorAvailability from "./admin/TutorAvailability/index";
 import SessionArrangement from "./admin/SessionArrangement/index";
 
+
 // Importing student route components
 import SessionRegistration from "./student/SessionRegistration";
 
 // Importing tutor route components
-import OrganizeAvailability from "./tutor/organizeAvailability/index";
 import Schedule from "./tutor/Schedule/index.js";
-
-import { doc, getDoc } from "firebase/firestore";
+import NewSessionQA from "./tutor/sessionQA/new";
+import SessionQA from "./tutor/sessionQA/index";
+import EditSessionQA from "./tutor/sessionQA/edit";
+import Statistics from "./admin/Statistics/index.js";
 
 // Lazy-loaded route components
 const LoginIn = lazy(() => import("./LoginIn"));
@@ -33,6 +36,7 @@ const MyProfile = lazy(() => import("./MyProfile"));
 const EditProfile = lazy(() => import("./MyProfile/EditProfile"));
 const ChangePassword = lazy(() => import("./MyProfile/ChangePassword"));
 const UserManagement = lazy(() => import("./admin/UserManagement"));
+const Helpline = lazy(() => import("./Helpline"));
 
 const Routing = () => {
   const { currentUser } = useContext(AuthContext);
@@ -132,6 +136,7 @@ const Routing = () => {
                   path="/admin/sessionarrangement"
                   element={<SessionArrangement />}
                 />
+                <Route path="/admin/statistics" element={<Statistics />} />
               </Route>
             ) : userRole === "student" ? (
               <Route
@@ -162,6 +167,7 @@ const Routing = () => {
                   path="/student/sessionregistration"
                   element={<SessionRegistration />}
                 />
+                <Route path="/student/helpline" element={<Helpline />} />
               </Route>
             ) : userRole === "tutor" ? (
               <Route
@@ -182,11 +188,17 @@ const Routing = () => {
                   path="/tutor/myprofile/changepassword"
                   element={<ChangePassword />}
                 />
-                <Route
-                  path="/tutor/organizeavailability"
-                  element={<OrganizeAvailability />}
-                />
+
                 <Route path="/tutor/schedule" element={<Schedule />} />
+                <Route
+                  path="/tutor/session-qa/new"
+                  element={<NewSessionQA />}
+                />
+                <Route
+                  path="/tutor/session-qa/edit/:id"
+                  element={<EditSessionQA />}
+                />
+                <Route path="/tutor/session-qa" element={<SessionQA />} />
               </Route>
             ) : (
               // Handle unknown roles here or redirect to an error page

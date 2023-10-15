@@ -41,6 +41,13 @@ export const adminSidebarItems = [
       <UserICon />
     </Link>
   ),
+  getSidebarItem(
+    "Statistics",
+    "statistics",
+    <Link to="/admin/statistics">
+      <UserICon />
+    </Link>
+  ),
 ];
 
 // Sidebar items for student
@@ -59,6 +66,13 @@ export const studentSidebarItems = [
       <UserICon />
     </Link>
   ),
+  getSidebarItem(
+    "Helpline",
+    "helpline",
+    <Link to="/student/helpline">
+      <UserICon />
+    </Link>
+  ),
 ];
 
 // Sidebar items for tutor
@@ -71,12 +85,16 @@ export const tutorSidebarItems = [
     </Link>
   ),
   getSidebarItem(
-    "Organize Availability",
-    "organize-availability",
-    <Link to="/tutor/organizeavailability">
+    "Session Q&As",
+    "session-qa",
+    <Link to="/tutor/session-qa">
       <UserICon />
     </Link>
   ),
+  // getItem("Car Management", "car management", <Union />, [
+  //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
+  //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
+  // ]),
   getSidebarItem(
     "Schedule",
     "schedule",
