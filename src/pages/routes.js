@@ -1,4 +1,5 @@
 import React, { lazy, useContext, useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import { Routes, Route, Navigate } from "react-router-dom";
 import AuthGuard from "../components/auth";
 import { AuthContext } from "../context/AuthContext";
@@ -11,6 +12,7 @@ import AddUserManagement from "./admin/UserManagement/add";
 import TutorAvailability from "./admin/TutorAvailability/index";
 import SessionArrangement from "./admin/SessionArrangement/index";
 
+
 // Importing student route components
 import SessionRegistration from "./student/SessionRegistration";
 
@@ -21,9 +23,6 @@ import SessionQA from "./tutor/sessionQA/index";
 import EditSessionQA from "./tutor/sessionQA/edit";
 import Statistics from "./admin/Statistics/index.js";
 
-import { doc, getDoc } from "firebase/firestore";
-
-// Lazy-loaded route components
 // Lazy-loaded route components
 const LoginIn = lazy(() => import("./LoginIn"));
 const Register = lazy(() => import("./Register"));
