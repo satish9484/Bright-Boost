@@ -1,18 +1,23 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../context/AuthContext";
-import { db } from "../../../firebase/firebase";
-import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { Badge, Calendar, Col, Row, Select } from "antd";
 import moment from "moment";
-import { Button, DatePicker, Form, Select, ConfigProvider } from "antd";
 import BreadCrumbs from "../../../components/common/Breadcrumbs";
-import Card from "../../../components/common/Card";
-import enUS from "antd/lib/locale/en_US";
-import { toast } from "react-toastify";
+import { db } from "../../../firebase/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import "./style.scss";
 
 const { Option } = Select;
-const dateFormatList = "DD/MM/YYYY";
 
-// Available subjects for registration
+// Define a list of navigation items for breadcrumbs
+const breadcrumbsList = [
+  {
+    name: "Tutor Availability",
+    link: "/admin/tutoravailability",
+    isActive: false,
+  },
+];
+
+// Available subjects
 const subjects = [
   "English",
   "Mathematics",
@@ -23,350 +28,235 @@ const subjects = [
 
 // Tutors by subject
 const tutorsBySubject = {
-  English: ["Harvey", "John"],
-  Mathematics: ["Rose", "Duane"],
-  Science: ["Earl", "Clifford"],
-  HumanitiesAndSocialSciences: ["Dennis", "Ophelia"],
-  TheArts: ["Della", "Kate"],
+  English: [
+    { name: "Harvey", email: "tutor1gmailcom" },
+    { name: "John", email: "tutorgmailcom" },
+  ],
+  Mathematics: [
+    { name: "Rose", email: "tutor1gmailcom" },
+    { name: "Duane", email: "tutorgmailcom" },
+  ],
+  Science: [
+    { name: "Earl", email: "tutor1gmailcom" },
+    { name: "Clifford", email: "tutorgmailcom" },
+  ],
+  "Humanities and Social Sciences": [
+    { name: "Dennis", email: "tutor1gmailcom" },
+    { name: "Ophelia", email: "tutorgmailcom" },
+  ],
+  "The Arts": [
+    { name: "Della", email: "tutor1gmailcom" },
+    { name: "Kate", email: "tutorgmailcom" },
+  ],
 };
-
-const sessionTime = [1, 2];
 
 // Firebase collection and document details
 const collectionName = "Bright-Boost";
-const documentId = "SessionRegistration";
-const documentId_1 = "tutorsAvailability";
+const documentId = "tutorsAvailability";
 
 const docRef = doc(db, collectionName, documentId);
-const docRef_1 = doc(db, collectionName, documentId_1);
 
-// Initial data for session registration
-const initialData = {
-  email: "",
-  subject: "English",
-  tutor: tutorsBySubject["English"][0] || "",
-  date: "",
-  time: "",
-  sessionTime: 1,
-};
-
-const SessionRegistration = () => {
-  const { currentUser } = useContext(AuthContext);
-
-  const [sessionRegistrationData, setSessionRegistrationData] =
-    useState(initialData);
-
-  // Initialize the last day of the current year
-  const [lastDayOfYear] = useState(moment().endOf("year"));
-
-  // Form setup
-  const [form] = Form.useForm();
-  const [selectedDate, setSelectedDate] = useState(null);
+const TutorAvailability = () => {
+  const [selectedSubject, setSelectedSubject] = useState("English");
   const [tutorListForSubject, setTutorListForSubject] = useState(
-    tutorsBySubject[sessionRegistrationData.subject] || []
+    tutorsBySubject["English"] || []
   );
-
-  const currentTime = moment().format("HH:mm:ss");
+  const [selectedTutor, setSelectedTutor] = useState(
+    tutorListForSubject[0].name
+  );
+  const endOfYear = moment().endOf("year");
+  const validRange = [moment(), endOfYear];
 
   useEffect(() => {
-    // Additional setup can be added here if needed
-  }, []);
+    const tutorInfo = tutorsBySubject[selectedSubject].find(
+      (tutorName) => tutorName.name === selectedTutor
+    );
+    if (tutorInfo) {
+      tutorsAvailability(tutorInfo.email);
+    }
+  }, [selectedSubject, selectedTutor]);
 
-  // Function to get available session slot limit
-  const getAvailableSessionSlot = async (subjectName, date) => {
+  const [avabilty, setAvabilty] = useState({});
+  // Function to check tutor availability on a specific date
+  const tutorsAvailability = async (tutorId) => {
     const docSnapshot = await getDoc(docRef);
     try {
       if (docSnapshot?.exists()) {
         const data = docSnapshot?.data();
-        if (data[subjectName] && data[subjectName][date]) {
-          const limit = data[subjectName][date]?.limit;
-          return limit;
-        } else {
-          return null;
-        }
-      } else {
-        toast.info("No data available for this document");
-      }
-    } catch (error) {
-      console.error("Error fetching limit: ", error);
-    }
-  };
 
-  // Function to check tutor availability on a specific date
-  const tutorsAvailability = async (tutorId, date) => {
-    const docSnapshot_1 = await getDoc(docRef_1);
-    try {
-      if (docSnapshot_1?.exists()) {
-        const data = docSnapshot_1?.data();
-
-        if (
-          data[tutorId]?.availabilityData?.hasOwnProperty(date) &&
-          data[tutorId]?.availabilityData[date]
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        toast.warning("No data found in the document.");
+        // Assuming your availability data is structured like this
+        const availabilityData = data[tutorId]?.availabilityData;
+        setAvabilty(availabilityData || {});
       }
     } catch (error) {
       console.error("Error fetching data from Firestore: ", error);
     }
   };
 
-  // Function to update data in Firebase
-  const updateDataAtFirebase = async (limit, data) => {
-    const docSnapshot = await getDoc(docRef);
-    try {
-      if (docSnapshot?.exists()) {
-        const existingData = docSnapshot?.data() || {};
-
-        if (existingData[sessionRegistrationData.subject]) {
-          const subjectData = existingData[sessionRegistrationData?.subject];
-          if (subjectData[selectedDate]) {
-            subjectData[selectedDate.toString()].limit = 2;
-            subjectData[selectedDate][currentTime] = data;
-          } else {
-            subjectData[selectedDate] = {
-              limit: limit,
-              [currentTime]: data,
-            };
-          }
-
-          const updateData = {
-            [sessionRegistrationData.subject]: subjectData,
-          };
-
-          await updateDoc(docRef, updateData);
-
-          toast.success(
-            `You have successfully registered for a session. Date: ${selectedDate} session time ${data.time}`
-          );
-        } else {
-          const dataToSet = {
-            [sessionRegistrationData.subject]: {
-              [selectedDate]: {
-                limit: limit,
-                [currentTime]: data,
-              },
-            },
-            ...existingData,
-          };
-
-          await setDoc(docRef, dataToSet);
-        }
-      } else {
-        toast.success("Document doesn't exist");
-      }
-    } catch (error) {
-      console.error("Error adding student record: ", error);
-    }
-  };
-
-  // Function to handle form submission
-  const handleFinish = async (values) => {
-    const keyFormat = sessionRegistrationData.date.replace(/\//g, "");
-    const tutorStatusOnSelectedDate = await tutorsAvailability(
-      "tutor1gmailcom",
-      keyFormat
-    );
-
-    const limit = await getAvailableSessionSlot(
-      sessionRegistrationData.subject,
-      sessionRegistrationData.date
-    );
-    const dataToStore = {
-      email: currentUser?.email || "",
-      time: currentTime,
-      sessionTime: values.sessionTime,
-      tutor: values.tutor,
-    };
-    try {
-      if (tutorStatusOnSelectedDate) {
-        if (limit === 1) {
-          if (values.sessionTime === 1) {
-            updateDataAtFirebase(values.sessionTime, dataToStore);
-          } else {
-            toast.info("Please select a session time as 1 hour");
-          }
-        } else if (limit === null) {
-          updateDataAtFirebase(values.sessionTime, dataToStore);
-        } else {
-          toast.info("No slot available for this date.");
-        }
-      } else {
-        toast.info("Tutor is not available");
-      }
-    } catch (error) {
-      console.error("Error adding student record: ", error);
-    }
-  };
-
-  // Function to disable dates in the past and beyond the current year
-  const disabledDate = (current) => {
-    return (
-      (current && current < moment().startOf("day")) ||
-      (current && current > lastDayOfYear.endOf("day"))
-    );
-  };
-
-  // Function to handle date change
-  const handleDateChange = async (date, dateString) => {
-    const keyFormat = dateString.replace(/\//g, "");
-    const tutorStatusOnSelectedDate = await tutorsAvailability(
-      "tutor1gmailcom",
-      keyFormat
-    );
-    const limit = await getAvailableSessionSlot(
-      sessionRegistrationData.subject,
-      dateString
-    );
-    setSelectedDate(dateString);
-    setSessionRegistrationData({
-      ...sessionRegistrationData,
-      date: dateString,
-    });
-
-    if (tutorStatusOnSelectedDate) {
-      limit === 1
-        ? toast.info("Only 1-hour slot is available")
-        : limit === 2
-        ? toast.info("This day's slot is full.")
-        : toast.info("For this day, all slots are available");
-    } else {
-      toast.info(
-        "Please select any other date since the tutor is not available."
-      );
-    }
-  };
-
   // Function to handle subject change
   const handleSubjectChange = (value) => {
-    setSessionRegistrationData({ ...sessionRegistrationData, subject: value });
     if (value in tutorsBySubject) {
-      setTutorListForSubject(tutorsBySubject[value]);
-      form.setFieldsValue({ tutor: tutorsBySubject[value][0] || "" });
+      const tutors = tutorsBySubject[value];
+      setTutorListForSubject(tutors);
+      setSelectedTutor(tutors[0].name);
+    }
+    setSelectedSubject(value);
+
+    tutorsAvailability("tutor1gmailcom");
+  };
+
+  const handleTutorNameChange = (value) => {
+    setSelectedTutor(value);
+  };
+
+  const dateCellRender = (value) => {
+    const today = moment(); // Get the current date
+    const listData = getListData(value);
+
+    // Check if the date is in the past
+    if (value.isBefore(today, "day")) {
+      return (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            backgroundColor: "white",
+            border: "1px solid #ccc",
+          }}
+        >
+          {/* No data to display for past dates */}
+        </div>
+      );
+    }
+
+    const availability = listData[0]; // Assuming there's only one event per date
+
+    const cellStyle = {
+      width: "100%",
+      height: "100%",
+      backgroundColor:
+        availability && availability.type === "success" ? "white" : "#8eff8e",
+      border: "1px solid #ccc",
+    };
+
+    return (
+      <div style={cellStyle}>
+        <ul className="events">
+          {availability && (
+            <li key={availability.content}>
+              <Badge status={availability.type} text={availability.content} />
+            </li>
+          )}
+        </ul>
+      </div>
+    );
+  };
+
+  // Function to render data for a specific month
+  // const monthCellRender = (value) => {
+  //   const num = getMonthData(value);
+  //   return num ? (
+  //     <div className="notes-month">
+  //       <section>{num}</section>
+  //       <span>Backlog number</span>
+  //     </div>
+  //   ) : null;
+  // };
+
+  // Function to render the Calendar cells
+  const cellRender = (current, info) => {
+    if (info.type === "date") return dateCellRender(current);
+    // if (info.type === "month") return monthCellRender(current);
+    return info.originNode;
+  };
+
+  const getListData = (value) => {
+    const dateKey = value.format("DDMMYYYY"); // Convert the date to a key in the format DDMMYY
+    const isAvailable = avabilty[dateKey.toString()];
+
+    if (value.isBefore(moment(), "day")) {
+      // Date is in the past
+      return [
+        {
+          type: "error",
+          content: "Unavailable",
+        },
+      ];
+    }
+
+    if (isAvailable === true) {
+      return [
+        {
+          type: "success",
+          content: "Available",
+        },
+      ];
+    } else if (isAvailable === false) {
+      return [
+        {
+          type: "error",
+          content: "Unavailable",
+        },
+      ];
     } else {
-      setTutorListForSubject([]);
+      return [
+        {
+          type: "error",
+          content: "Unavailable",
+        },
+      ]; // Return an Unavailable array if the date is not in avabilty
     }
   };
+
+  // Function to retrieve data for a specific month
+  // const getMonthData = (value) => {
+  //   if (value.month() === 8) {
+  //     return 1394;
+  //   }
+  // };
 
   return (
     <>
-      <BreadCrumbs
-        list={[
-          {
-            name: "Session Registration",
-            link: "/student/sessionregistration",
-            isActive: false,
-          },
+      <BreadCrumbs list={breadcrumbsList} />
+      <Row
+        gutter={[
+          { xs: 0, sm: 0 },
+          { xs: 12, sm: 12 },
         ]}
-      />
-      <Card>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFinish}
-          initialValues={{ ...initialData }}
-        >
-          <div className="row">
-            <div className="col-md-12">
-              <h3 className="pageLabel mar-bottom-18">Add New User</h3>
-            </div>
-
-            <Form.Item
-              className="col-xl-6 col-md-8 form-group"
-              label="Subject"
-              labelWrap={true}
-              name="subject"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select a subject",
-                },
-              ]}
-            >
-              <Select
-                placeholder="Select Subject"
-                onChange={handleSubjectChange}
-              >
-                {subjects.map((subject) => (
-                  <Option key={subject} value={subject}>
-                    {subject}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              className="col-xl-6 col-md-8 form-group"
-              label="Tutor Names"
-              labelWrap={true}
-              name="tutor"
-              rules={[
-                {
-                  required: true,
-                  message: "Please select a tutor",
-                },
-              ]}
-            >
-              <Select placeholder="Tutor Names">
-                {tutorListForSubject.map((tutor) => (
-                  <Option key={tutor} value={tutor}>
-                    {tutor}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              className="col-xl-6 col-md-8 form-group"
-              label="Session Duration"
-              labelWrap={true}
-              name="sessionTime"
-            >
-              <Select placeholder="Select Subject">
-                {sessionTime.map((sessionTime) => (
-                  <Option key={sessionTime} value={sessionTime}>
-                    {sessionTime} hour
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-
-            <ConfigProvider locale={enUS}>
-              <Form.Item
-                className="col-xl-6 col-md-8 form-group"
-                label="Date"
-                labelWrap={true}
-                name="date"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select a date",
-                  },
-                ]}
-              >
-                <DatePicker
-                  format={dateFormatList}
-                  disabledDate={disabledDate}
-                  onChange={handleDateChange}
-                />
-              </Form.Item>
-            </ConfigProvider>
-
-            <div className="col-xl-12 d-flex justify-content-end mar-top-8">
-              <Button className="mar-right-8">Cancel</Button>
-              <Button type="primary" htmlType="submit">
-                Save
-              </Button>
-            </div>
-          </div>
-        </Form>
-      </Card>
+        className="mar-bottom-20"
+      >
+        <Col xl={12} lg={8} md={16} sm={24}>
+          <Select
+            className="w-100"
+            placeholder="Select Subject"
+            onChange={handleSubjectChange}
+            value={selectedSubject}
+          >
+            {subjects.map((subject) => (
+              <Option key={subject} value={subject}>
+                {subject}
+              </Option>
+            ))}
+          </Select>
+        </Col>
+        <Col xl={12} lg={16} md={8} sm={24}>
+          <Select
+            className="w-100 pad-left"
+            placeholder="Tutor Names"
+            onChange={handleTutorNameChange}
+            value={selectedTutor}
+          >
+            {tutorListForSubject.map((tutor) => (
+              <Option key={tutor.name} value={tutor.name}>
+                {tutor.name}
+              </Option>
+            ))}
+          </Select>
+        </Col>
+      </Row>
+      <Calendar cellRender={cellRender} validRange={validRange} />
     </>
   );
 };
 
-export default SessionRegistration;
+export default TutorAvailability;
