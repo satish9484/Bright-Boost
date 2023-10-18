@@ -3,7 +3,7 @@ import "./style.scss";
 import { db } from "../../../firebase/firebase";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
 import dayjs from "dayjs";
-import { Calendar } from "antd";
+import { Calendar, Radio, message } from "antd";
 import { AuthContext } from "../../../context/AuthContext";
 
 const Schedule = () => {
@@ -15,34 +15,73 @@ const Schedule = () => {
 
 	//sanitise tutor email
 	const removeSpecialCharacters = (email) => {
-		// Regular expression to remove all special characters
-		return email.replace(/[^a-zA-Z0-9]/g, "");
+		return email.replace(/[^a-zA-Z0-9]/g, ""); // Regular expression to remove all special characters
 	};
 
-	// tutor availability data as {DDMMYYYY: true/false}
+	// tutor FULL availability data for all subjects as {Subject1: {DDMMYYYY: true/false}, Subject2: {DDMMYYYY: true/false}}
+	const [fullAvailabilityData, setFullAvailabilityData] = useState();
+
+	// tutor availability data for a selected subject as {DDMMYYYY: true/false}
 	const [availabilityData, setData] = useState([]);
 
 	//   //tutor name
 	const [tutorName, setName] = useState();
 
-	//   //tutor subejct
-	const [tutorSubject, setSubject] = useState();
+	//tutor subject which availability shoulbe be updated
+	const [selectedSubject, setSelectedSubject] = useState();
+
+	//all tutor subjects
+	const [subjects, setSubjects] = useState([]);
+
+	//to trigger fetchData()
+	const [trigger, setTrigger] = useState(false);
+
+	// subject selection to display availability accordingly
+	const handleSubjectChange = (event) => {
+		setSelectedSubject(event.target.value);
+		const selectedSubject = event.target.value;
+
+		// Get availability for the selected subject
+		const availabilityForSelectedSubject =
+			fullAvailabilityData[selectedSubject];
+		setData(availabilityForSelectedSubject);
+	};
 
 	//to get tutor availability data on component mount
 	useEffect(() => {
 		const fetchData = async () => {
-			const docRef = doc(db, "Bright-Boost", "tutorsAvailability");
-			const docSnap = await getDoc(docRef);
-			const availabilityData = docSnap.data();
-			const cleanedTutorEmail = removeSpecialCharacters(currentUser.email);
-			setTutorEmail(cleanedTutorEmail);
-			const tutorData = availabilityData[cleanedTutorEmail];
-			setSubject(tutorData.Subject);
-			setName(tutorData.Name);
-			setData(tutorData.availabilityData);
+			try {
+				const docRef = doc(db, "Bright-Boost", "tutorsAvailability");
+				const docSnap = await getDoc(docRef);
+				const availabilityData = docSnap.data();
+				const cleanedTutorEmail = removeSpecialCharacters(currentUser.email);
+				setTutorEmail(cleanedTutorEmail);
+				const tutorData = availabilityData[cleanedTutorEmail];
+
+				setName(tutorData.Name);
+				setFullAvailabilityData(tutorData.availabilityData);
+
+				const allSubjects = Object.keys(tutorData.availabilityData);
+				setSubjects(allSubjects);
+
+				if (allSubjects.length > 0) {
+					const firstSubject = allSubjects[0];
+
+					setSelectedSubject(firstSubject);
+
+					// Get availability for the first subject
+					const availabilityForFirstSubject =
+						tutorData.availabilityData[firstSubject];
+					setData(availabilityForFirstSubject);
+				} else {
+					console.error("No subjects available.");
+				}
+			} catch (error) {
+				console.error("Error fetching data:", error);
+			}
 		};
 		fetchData();
-	}, []); // Run once on component mount
+	}, [trigger]); // Run on component mount and when updated availability submitted to DB
 
 	const onSelect = (newValue) => {
 		setValue(newValue);
@@ -74,21 +113,34 @@ const Schedule = () => {
 		setData(updatedAvailabilityData);
 	};
 
-	//update tutor availability in DB on submit
+	//update tutor availability for a selected subject in DB on submit
 	const updateAvailbility = async () => {
-		const availabilityRef = doc(db, "Bright-Boost", "tutorsAvailability");
-		const updatePath = `${tutorEmail}.availabilityData`;
-		const updateObject = {
-			[updatePath]: availabilityData,
-		};
-		await updateDoc(availabilityRef, updateObject);
+		try {
+			const availabilityRef = doc(db, "Bright-Boost", "tutorsAvailability");
+			const updatePath = `${tutorEmail}.availabilityData.${selectedSubject}`;
+			const updateObject = {
+				[updatePath]: availabilityData,
+			};
+			setTrigger(!trigger);
+			await updateDoc(availabilityRef, updateObject);
+			message.success("Availability successfully updated!");
+		} catch (error) {
+			message.error("Failed to update availability. Please try again.");
+		}
 	};
 
 	return (
 		<>
-			<h2 className="tutor-info">
-				{tutorName} - {tutorSubject}
-			</h2>
+			<h2 className="tutor-info">{tutorName}</h2>
+
+			<Radio.Group onChange={handleSubjectChange} value={selectedSubject}>
+				{subjects.map((subject) => (
+					<Radio key={subject} value={subject}>
+						{subject}
+					</Radio>
+				))}
+			</Radio.Group>
+
 			<Calendar
 				value={value}
 				onSelect={onSelect}
