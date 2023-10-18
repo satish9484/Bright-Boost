@@ -6,6 +6,33 @@ import dayjs from "dayjs";
 import moment from "moment";
 import { Calendar, Skeleton, Radio } from "antd";
 
+
+
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from "chart.js";
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
+
+
+const chartOptions = {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Percentage of questions answered for each day of this month',
+      }
+    }
+  };
+
+
 const filterBySubject = [
     {
       key: 'English',
@@ -29,12 +56,52 @@ const filterBySubject = [
     }
 ];
 
+
+
+const getMin = function (arr) {
+    var currentMin;
+    if (arr !== undefined && arr.length > 0) {
+        if (arr.length == 1) {
+            return arr[0];
+        }
+        else {
+            currentMin = arr[0];
+            for (var i = 1; i < arr.length; i++) {
+                if (currentMin > arr[i]) {
+                    currentMin = arr[i];
+                }
+            }
+            return currentMin;
+        }
+    }
+};
+
+const getMax = function (arr) {
+    var currentMin;
+    if (arr !== undefined && arr.length > 0) {
+        if (arr.length == 1) {
+            return arr[0];
+        }
+        else {
+            currentMin = arr[0];
+            for (var i = 1; i < arr.length; i++) {
+                if (currentMin < arr[i]) {
+                    currentMin = arr[i];
+                }
+            }
+            return currentMin;
+        }
+    }
+};
+
 const Statistics = () => {
     const [value, setValue] = useState(() => dayjs((new Date()).toString()));
     
     const allSubjects = ["English", "Mathematics", "Science", "Humanities and Social Sciences", "The Arts"];
 
     const [selectedSubjectFilter, setSelectedSubjectFilter] = useState("All");
+    const [chartData, setChartData] = useState({});
+
     var selectedSubjects = allSubjects;
 
     const [isLoading, setIsLoading] = useState(true);
@@ -51,7 +118,10 @@ const Statistics = () => {
         "The Arts": {}
     };
 
+    var tutorAlreadyCounted = {};
+
     const [questionStatistics, setQuestionStatistics] = useState({});
+    var currentMonth = moment(new Date()).format("MM");
 
     const subjectFilterChange = function (e) {
         selectedSubjects = [];
@@ -192,35 +262,149 @@ const Statistics = () => {
                         }
                         else if (QAArray.id == "tutorsAvailability") {
                             Object.keys(QAArray.data()).forEach(tutorEmail => {
-                                if (selectedSubject.toLowerCase().includes(QAArray.data()[tutorEmail].Subject.toLowerCase()) || QAArray.data()[tutorEmail].Subject.toLowerCase().includes(selectedSubject.toLowerCase())) {
-                                    Object.keys(QAArray.data()[tutorEmail]['availabilityData']).forEach(dateKey => {
-                                        if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] === undefined) {
-                                            queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] = {};
-                                        }
-                                        if (QAArray.data()[tutorEmail]['availabilityData'][dateKey] == true) {
-                                            if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] === undefined) {
-                                                queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] = 1;
+                                if (QAArray.data()[tutorEmail].Subject !== undefined) {
+                                    // old data structure handling, in case it is still applicable
+                                    if (selectedSubject.toLowerCase().includes(QAArray.data()[tutorEmail].Subject.toLowerCase()) || QAArray.data()[tutorEmail].Subject.toLowerCase().includes(selectedSubject.toLowerCase())) {
+                                        Object.keys(QAArray.data()[tutorEmail]['availabilityData']).forEach(dateKey => {
+                                            if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] === undefined) {
+                                                queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] = {};
                                             }
-                                            else {
-                                                queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] += 1;
-                                            }
-                                            if (assumptions[selectedSubject][moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] === undefined) {
-                                                assumptions[selectedSubject][moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] = true;
-                                                if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutorsAssumed'] === undefined) {
-                                                    queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutorsAssumed'] = 1;
+                                            if (QAArray.data()[tutorEmail]['availabilityData'][dateKey] == true && tutorAlreadyCounted[tutorEmail + dateKey] === undefined) {
+                                                tutorAlreadyCounted[tutorEmail + dateKey] = true;
+                                                if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] === undefined) {
+                                                    queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] = 1;
                                                 }
                                                 else {
-                                                    queryResult[moment(dateKey, "DD/MM/YYYY").format('YYYYMMDD')]['numTutorsAssumed'] += 1;                                        
+                                                    queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] += 1;
+                                                }
+                                                if (assumptions[selectedSubject][moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] === undefined) {
+                                                    assumptions[selectedSubject][moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] = true;
+                                                    if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutorsAssumed'] === undefined) {
+                                                        queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutorsAssumed'] = 1;
+                                                    }
+                                                    else {
+                                                        queryResult[moment(dateKey, "DD/MM/YYYY").format('YYYYMMDD')]['numTutorsAssumed'] += 1;                                        
+                                                    }
                                                 }
                                             }
+                                        });
+                                    }
+                                }
+                                else {
+                                    // new data structure as discussed on 13th Oct
+                                    Object.keys(QAArray.data()[tutorEmail].availabilityData).forEach(Subject => {
+                                        if (selectedSubject.toLowerCase().includes(Subject.toLowerCase()) || Subject.toLowerCase().includes(selectedSubject.toLowerCase())) {
+                                            Object.keys(QAArray.data()[tutorEmail]['availabilityData'][Subject]).forEach(dateKey => {
+                                                if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] === undefined) {
+                                                    queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] = {};
+                                                }
+                                                if (QAArray.data()[tutorEmail]['availabilityData'][Subject][dateKey] == true && tutorAlreadyCounted[tutorEmail + dateKey] === undefined) {
+                                                    tutorAlreadyCounted[tutorEmail + dateKey] = true;
+                                                    if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] === undefined) {
+                                                        queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] = 1;
+                                                    }
+                                                    else {
+                                                        queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutors'] += 1;
+                                                    }
+                                                    if (assumptions[selectedSubject][moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] === undefined) {
+                                                        assumptions[selectedSubject][moment(dateKey, "DDMMYYYY").format('YYYYMMDD')] = true;
+                                                        if (queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutorsAssumed'] === undefined) {
+                                                            queryResult[moment(dateKey, "DDMMYYYY").format('YYYYMMDD')]['numTutorsAssumed'] = 1;
+                                                        }
+                                                        else {
+                                                            queryResult[moment(dateKey, "DD/MM/YYYY").format('YYYYMMDD')]['numTutorsAssumed'] += 1;                                        
+                                                        }
+                                                    }
+                                                }
+                                            });
                                         }
                                     });
+
                                 }
                             });
                         }
                     });
                 });
+                
+                var chartXAxis = [];
+                var chartData = [];
+
+                var chartXAxisInterpolated = [];
+                var chartDataInterpolated = [];
+
+                Object.keys(queryResult).forEach(dateKey => {
+                    if (moment(dateKey, "YYYYMMDD").format("MM") == currentMonth) {
+                        if (queryResult[dateKey]['numAnswers'] !== undefined && queryResult[dateKey]['numQuestions'] !== undefined) {
+                            if (queryResult[dateKey]['numQuestions'] != 0) {
+                                if (!chartXAxis.includes(parseInt(moment(dateKey, "YYYYMMDD").format("DD")))){
+                                    chartXAxis.push(parseInt(moment(dateKey, "YYYYMMDD").format("DD")));                        
+                                    chartData.push(queryResult[dateKey]['numAnswers'] / queryResult[dateKey]['numQuestions'] * 100);  
+                                }  
+                            }
+                        }
+                    }
+                });
+
+                var queryChartData = {};
+
+                if (chartXAxis.length > 1) {
+
+                    var earliestDate = getMin(chartXAxis);
+                    var latestDate = getMax(chartXAxis);
+                    var x0 = earliestDate;
+                    var y0 = chartData[0];
+                    var c = chartData[0];
+                    var j = 1;
+                    var x1 = chartXAxis[j];
+                    var y1 = chartData[j];
+                    for (var i = earliestDate; i <= latestDate; i++) {
+                        
+                        if (i == x1 && i < latestDate) {
+                            x0 = x1;
+                            y0 = y1;
+                            c = y1;
+                            j = j + 1;
+                            x1 = chartXAxis[j];
+                            y1 = chartData[j];
+                        }
+                        else if (i == latestDate) {
+                            j = j + 1;
+                        }
+                        if (!chartXAxis.includes(i)) {
+                            var yInterpolated = (y1-y0) / (x1-x0) * (i-x0) + c;
+                            chartXAxisInterpolated.push("");
+                            chartDataInterpolated.push(yInterpolated);    
+                        }
+                        else {
+                            chartXAxisInterpolated.push(i.toString());
+                            chartDataInterpolated.push(chartData[j-1]);
+                        }
+                    }
+                    queryChartData = {
+                        labels: chartXAxisInterpolated,
+                        datasets: [
+                        {
+                            label: 'Rate',
+                            data: chartDataInterpolated,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        }],
+                    };
+                }
+                else {
+                    queryChartData = {
+                        labels: chartXAxis,
+                        datasets: [
+                        {
+                            label: 'Rate',
+                            data: chartData,
+                            borderColor: 'rgb(255, 99, 132)',
+                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        }],
+                    };
+                }
                 setQuestionStatistics(queryResult);
+                setChartData(queryChartData);
                 setIsLoading(false);
             }
         })
@@ -232,6 +416,17 @@ const Statistics = () => {
 
 	const onPanelChange = (newValue) => {
 		setValue(newValue);
+        queryResult = {};
+        var assumptions = {
+            English: {},
+            Mathematics: {},
+            Science: {},
+            "Humanities and Social Sciences": {},
+            "The Arts": {}
+        };
+        setQuestionStatistics({});
+        currentMonth = newValue.format("MM");
+        fetchData();
 	};
 
     if (isLoading) {
@@ -268,7 +463,7 @@ const Statistics = () => {
                         // since a session runs from 3:30pm to 5:30pm each day, if the current time has passed 4:15pm of that day, it is considered that the (statistics of the) day can be finalised and no more indication of "TBD"
                         dateNotPast = false;
                     }
-                    if (questionStatistics[date.format("YYYYMMDD")] !== undefined && (questionStatistics[date.format("YYYYMMDD")].numQuestions !== undefined || questionStatistics[date.format("YYYYMMDD")].numStudents !== undefined  || questionStatistics[date.format("YYYYMMDD")].numTutors)) {
+                    if (questionStatistics[date.format("YYYYMMDD")] !== undefined && (questionStatistics[date.format("YYYYMMDD")].numQuestions !== undefined || questionStatistics[date.format("YYYYMMDD")].numStudents !== undefined  || questionStatistics[date.format("YYYYMMDD")].numTutors !== undefined)) {
                         return (
                             <>
                                 <span>Stu: {questionStatistics[date.format("YYYYMMDD")]["numStudents"] !== undefined && questionStatistics[date.format("YYYYMMDD")]["numStudentsAssumed"] !== undefined ? (questionStatistics[date.format("YYYYMMDD")]["numStudents"] >= questionStatistics[date.format("YYYYMMDD")]["numStudentsAssumed"] ? questionStatistics[date.format("YYYYMMDD")]["numStudents"] : questionStatistics[date.format("YYYYMMDD")]["numStudentsAssumed"].toString() + " (act + asm)") : questionStatistics[date.format("YYYYMMDD")]["numStudentsAssumed"] !== undefined ? questionStatistics[date.format("YYYYMMDD")]["numStudentsAssumed"].toString() + " (asm)" : dateNotPast ? "0 (TBD)" : "0"}</span><br />
@@ -280,6 +475,8 @@ const Statistics = () => {
                     }
 				}}
 			/>
+            
+            <Line options={chartOptions} data={chartData} />
 		</>
 	);
 };
