@@ -1,12 +1,20 @@
-import React, { useContext, useState } from "react";
-// import { AuthContext } from "../../context/AuthContext";
-import { db } from "../../firebase/firebase";
-import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Table,
+  Space,
+  Form,
+  Select,
+  DatePicker,
+  Button,
+  ConfigProvider,
+  message,
+} from "antd";
 import moment from "moment";
-import { Button, DatePicker, Form, Select, ConfigProvider } from "antd";
-import BreadCrumbs from "../../components/common/Breadcrumbs";
-import Card from "../../components/common/Card";
-
+import { AuthContext } from "../../../context/AuthContext";
+import { db } from "../../../firebase/firebase";
+import { arrayUnion, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import BreadCrumbs from "../../../components/common/Breadcrumbs";
+import Card from "../../../components/common/Card";
 import enUS from "antd/lib/locale/en_US";
 
 const { Option } = Select;
@@ -16,8 +24,8 @@ const subjects = [
   "English",
   "Mathematics",
   "Science",
-  "Humanities and Social Sciences",
-  "The Arts",
+  "HumanitiesAndSocialSciences",
+  "Arts",
 ];
 
 const tutorsBySubject = {
@@ -25,7 +33,7 @@ const tutorsBySubject = {
   Mathematics: ["Rose", "Duane"],
   Science: ["Earl", "Clifford"],
   HumanitiesAndSocialSciences: ["Dennis", "Ophelia"],
-  TheArts: ["Della", "Kate"],
+  Arts: ["Della", "Kate"],
 };
 
 const sessionTime = [1, 2];
@@ -42,9 +50,8 @@ const initialStudentData = {
   sessionTime: 1, // Set a default session time here
 };
 
-const SessionRegistration = () => {
-  const currentUser = {};
-  // const { currentUser } = useContext(AuthContext);
+const SessionRegistrationPage = () => {
+  const { currentUser } = useContext(AuthContext);
   const [currentTime] = useState(moment().format("HH:mm:ss"));
   const [lastDayOfYear] = useState(moment().endOf("year"));
   const [form] = Form.useForm();
@@ -52,6 +59,30 @@ const SessionRegistration = () => {
   const [tutorListForSubject, setTutorListForSubject] = useState(
     tutorsBySubject[initialStudentData.subject] || []
   );
+
+  const [sessionRegistrations, setSessionRegistrations] = useState([]);
+  const [submittedDetails, setSubmittedDetails] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = doc(db, collectionName, documentId);
+        const docSnapshot = await getDoc(docRef);
+
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data();
+          if (data) {
+            const sessionRegistrationsData = Object.values(data);
+            setSessionRegistrations(sessionRegistrationsData);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching session registrations: ", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleFinish = async (values) => {
     try {
@@ -83,12 +114,16 @@ const SessionRegistration = () => {
         await setDoc(docRef, dataToSet);
       }
 
-      console.log("Student record added successfully!");
+      message.success("Student record added successfully!");
+      form.resetFields();
+
+      // Add the submitted details to the state
+      setSubmittedDetails([...submittedDetails, dataToStore]);
     } catch (error) {
       console.error("Error adding student record: ", error);
+      message.error("Error adding student record.");
     }
   };
-
   const disabledDate = (current) => {
     return (
       (current && current < moment().startOf("day")) ||
@@ -98,6 +133,15 @@ const SessionRegistration = () => {
 
   const handleDateChange = (date, dateString) => {
     setSelectedDate(dateString);
+  };
+  const handleEdit = (record) => {
+    // Implement your logic to open an edit modal or navigate to an edit page
+    console.log("Edit clicked for record:", record);
+  };
+
+  const handleDelete = (record) => {
+    // Implement your logic to confirm and delete the record
+    console.log("Delete clicked for record:", record);
   };
 
   const handleSubjectChange = (value) => {
@@ -109,6 +153,39 @@ const SessionRegistration = () => {
       setTutorListForSubject([]);
     }
   };
+
+  const columns = [
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+    },
+    {
+      title: "Duration",
+      dataIndex: "sessionTime",
+      key: "sessionTime",
+    },
+    {
+      title: "Subject Name",
+      dataIndex: "subject",
+      key: "subject",
+    },
+    {
+      title: "Tutor Name",
+      dataIndex: "tutor",
+      key: "tutor",
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (record) => (
+        <Space size="middle">
+          <a onClick={() => handleEdit(record)}>Edit</a>
+          <a onClick={() => handleDelete(record)}>Delete</a>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <>
@@ -223,8 +300,11 @@ const SessionRegistration = () => {
           </div>
         </Form>
       </Card>
+      <Card>
+        <Table columns={columns} dataSource={submittedDetails} />
+      </Card>
     </>
   );
 };
 
-export default SessionRegistration;
+export default SessionRegistrationPage;

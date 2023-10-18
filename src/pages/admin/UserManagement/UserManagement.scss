@@ -1,8 +1,7 @@
-@import "../../scss/variable";
-@import "../../scss/mixin";
+@import "../../../scss/variable";
+@import "../../../scss/mixin";
 
 .user-management {
-
   .verification {
     display: inline-block;
     padding: 8px 16px;
@@ -20,9 +19,18 @@
   }
 }
 
+:where(.css-dev-only-do-not-override-18iikkb).ant-form-item
+  .ant-form-item-label
+  > label {
+  color: $white;
+}
+.ant-upload {
+  color: wheat;
+}
+
 .ant-switch-checked {
   background-color: #757575;
-  
+
   &:focus {
     box-shadow: none;
   }
@@ -31,7 +39,7 @@
 .editUserManagement {
   .label {
     color: $white;
-     font-size: 14px;
-     margin-bottom: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
   }
 }

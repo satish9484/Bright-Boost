@@ -1,5 +1,6 @@
 .form-group {
   // Controls Input Field For Text
+
   .ant-input {
     background: $white;
     border: 1px solid $placeholder-color;
@@ -46,6 +47,9 @@
     min-height: 45px;
     padding: 5px 20px;
     width: 100%;
+  }
+  .ant-select-selector {
+    min-height: 45px;
   }
   .ant-select-multiple {
     .ant-select-selection-item {

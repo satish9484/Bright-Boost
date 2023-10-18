@@ -7,9 +7,9 @@ import ScrollToTop from "../components/common/scroll";
 import Loader from "../components/common/loader";
 // import { setupAxios } from "../utils";
 import { store } from "../Redux/store";
-// import { AuthContextProvider } from "../context/AuthContext";
+import { AuthContextProvider } from "../context/AuthContext";
 
-const { PUBLIC_URL } = process.env;
+const { PUBLIC_URL } = process.env
 
 // setupAxios(axios, store);
 
@@ -17,13 +17,13 @@ const AppContainer = () => (
   <Provider store={store}>
     <Suspense fallback={<Loader isSuspense />}>
       <Loader>
-        {/* <AuthContextProvider> */}
-        <BrowserRouter basename={PUBLIC_URL}>
-          <ScrollToTop>
-            <Routes />
-          </ScrollToTop>
-        </BrowserRouter>
-        {/* </AuthContextProvider> */}
+        <AuthContextProvider>
+          <BrowserRouter basename={PUBLIC_URL}>
+            <ScrollToTop>
+              <Routes />
+            </ScrollToTop>
+          </BrowserRouter>
+        </AuthContextProvider>
       </Loader>
     </Suspense>
   </Provider>
