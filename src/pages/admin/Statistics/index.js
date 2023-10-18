@@ -114,20 +114,23 @@ const getMax = function (arr) {
     }
 };
 
-const Statistics = () => {
-  const [value, setValue] = useState(() => dayjs(new Date().toString()));
-
-  const allSubjects = [
+const allSubjects = [
     "English",
     "Mathematics",
     "Science",
     "Humanities and Social Sciences",
     "The Arts",
   ];
+
+var selectedSubjects = allSubjects;
+
+var currentMonth = moment(new Date()).format("MM");
+
+const Statistics = () => {
+  const [value, setValue] = useState(() => dayjs(new Date().toString()));
+
     const [selectedSubjectFilter, setSelectedSubjectFilter] = useState("All");
     const [chartData, setChartData] = useState({});
-
-    var selectedSubjects = allSubjects;
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -145,7 +148,7 @@ const Statistics = () => {
     var tutorAlreadyCounted = {};
 
     const [questionStatistics, setQuestionStatistics] = useState({});
-    var currentMonth = moment(new Date()).format("MM");
+    
 
   const subjectFilterChange = function (e) {
     selectedSubjects = [];
