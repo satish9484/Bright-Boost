@@ -28,31 +28,20 @@ const subjects = [
 
 // Tutors by subject
 const tutorsBySubject = {
-  English: [
-    { name: "Harvey", email: "tutor1gmailcom" },
-    { name: "John", email: "tutorgmailcom" },
-  ],
-  Mathematics: [
-    { name: "Rose", email: "tutor1gmailcom" },
-    { name: "Duane", email: "tutorgmailcom" },
-  ],
-  Science: [
-    { name: "Earl", email: "tutor1gmailcom" },
-    { name: "Clifford", email: "tutorgmailcom" },
-  ],
+  English: [{ name: "Harvey", email: "tutor1gmailcom" }],
+  Mathematics: [{ name: "Rose", email: "tutor1gmailcom" }],
+  Science: [{ name: "Earl", email: "tutor1gmailcom" }],
   "Humanities and Social Sciences": [
     { name: "Dennis", email: "tutor1gmailcom" },
-    { name: "Ophelia", email: "tutorgmailcom" },
   ],
-  "The Arts": [
-    { name: "Della", email: "tutor1gmailcom" },
-    { name: "Kate", email: "tutorgmailcom" },
-  ],
+  "The Arts": [{ name: "Della", email: "tutor1gmailcom" }],
 };
 
 // Firebase collection and document details
 const collectionName = "Bright-Boost";
 const documentId = "tutorsAvailability";
+const endOfYear = moment().endOf("year");
+const validRange = [moment(), endOfYear];
 
 const docRef = doc(db, collectionName, documentId);
 
@@ -62,21 +51,71 @@ const TutorAvailability = () => {
     tutorsBySubject["English"] || []
   );
   const [selectedTutor, setSelectedTutor] = useState(
-    tutorListForSubject[0].name
+    tutorListForSubject[0]?.name || ""
   );
-  const endOfYear = moment().endOf("year");
-  const validRange = [moment(), endOfYear];
+
+  const [avabilty, setAvabilty] = useState({});
 
   useEffect(() => {
-    const tutorInfo = tutorsBySubject[selectedSubject].find(
-      (tutorName) => tutorName.name === selectedTutor
+    const fetchData = async () => {
+      try {
+        const docSnapshot = await getDoc(docRef);
+
+        if (!docSnapshot.exists()) {
+          console.log("Document doesn't exist.");
+          return tutorsBySubject;
+        }
+
+        const data = docSnapshot.data();
+
+        if (!data || !Object.keys(data).length) {
+          console.log("No data to process.");
+          return tutorsBySubject;
+        }
+
+        for (const [tutorEmail, tutorInfo] of Object.entries(data)) {
+          const tutorName = tutorInfo?.Name;
+          const tutorProfessionalSubject = tutorInfo?.availabilityData;
+
+          for (const subjectName of Object.keys(tutorProfessionalSubject)) {
+            if (subjects.includes(subjectName)) {
+              if (!tutorsBySubject[subjectName]) {
+                tutorsBySubject[subjectName] = [];
+              }
+
+              // Check if the tutor is not already in the list for the subject
+              const existingTutor = tutorsBySubject[subjectName].find(
+                (tutor) => tutor.email === tutorEmail
+              );
+
+              if (!existingTutor) {
+                // console.log(subjectName, tutorName, tutorEmail);
+                tutorsBySubject[subjectName].push({
+                  name: tutorName,
+                  email: tutorEmail,
+                });
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data from Firestore: ", error);
+      }
+
+      return tutorsBySubject;
+    };
+
+    fetchData();
+
+    const tutorInfo = tutorsBySubject[selectedSubject]?.find(
+      (tutor) => tutor.name === selectedTutor
     );
     if (tutorInfo) {
       tutorsAvailability(tutorInfo.email);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSubject, selectedTutor]);
 
-  const [avabilty, setAvabilty] = useState({});
   // Function to check tutor availability on a specific date
   const tutorsAvailability = async (tutorId) => {
     const docSnapshot = await getDoc(docRef);
@@ -86,7 +125,9 @@ const TutorAvailability = () => {
 
         // Assuming your availability data is structured like this
         const availabilityData = data[tutorId]?.availabilityData;
-        setAvabilty(availabilityData || {});
+
+        console.log(availabilityData[selectedSubject] || {});
+        setAvabilty(availabilityData[selectedSubject] || {});
       }
     } catch (error) {
       console.error("Error fetching data from Firestore: ", error);
@@ -172,7 +213,9 @@ const TutorAvailability = () => {
 
   const getListData = (value) => {
     const dateKey = value.format("DDMMYYYY"); // Convert the date to a key in the format DDMMYY
-    const isAvailable = avabilty[dateKey.toString()];
+    const isAvailable = avabilty[dateKey?.toString()];
+
+    console.log(avabilty[dateKey]);
 
     if (value.isBefore(moment(), "day")) {
       // Date is in the past
@@ -246,8 +289,8 @@ const TutorAvailability = () => {
             onChange={handleTutorNameChange}
             value={selectedTutor}
           >
-            {tutorListForSubject.map((tutor) => (
-              <Option key={tutor.name} value={tutor.name}>
+            {tutorListForSubject.map((tutor, i) => (
+              <Option key={i} value={tutor.name}>
                 {tutor.name}
               </Option>
             ))}
