@@ -29,10 +29,6 @@ const list = [
     isActive: true,
   },
 ];
-<<<<<<< HEAD
-const UserManagement = () => {
-  useEffect(() => {
-=======
 
 const UserManagement = () => {
   const [data, setData] = useState([]);
@@ -68,7 +64,6 @@ const UserManagement = () => {
       }
     };
     fetchData();
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd
     // const addStudent = async () => {
     //   await updateDoc(doc(db, "Bright-Boost", "students"), {
     //     student: arrayUnion({
@@ -98,8 +93,6 @@ const UserManagement = () => {
     // docSnap();
   }, []);
 
-<<<<<<< HEAD
-=======
   const updateStudentStatus = async (email, newStatus) => {
     try {
       const updatedData = data.map((student) => {
@@ -116,83 +109,12 @@ const UserManagement = () => {
     }
   };
 
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd
   const onSearch = (value) => console.log(value);
   // const onChange = (checkedValues) => {
   //   console.log("checked = ", checkedValues);
   // };
 
   const columns = [
-<<<<<<< HEAD
-    {
-      title: "Full Name",
-      dataIndex: "name",
-      key: "name",
-      render: (row) => (
-        <div>
-          <div>{row.name}</div>
-        </div>
-      ),
-    },
-    {
-      title: "Email Address",
-      dataIndex: "email",
-      key: "email",
-      render: (row) => (
-        <div>
-          <div>{row.emailaddress}</div>
-        </div>
-      ),
-    },
-    {
-      title: "Phone Number",
-      dataIndex: "number",
-      key: "number",
-      render: (row) => (
-        <div>
-          <div>{row.phonenumber}</div>
-        </div>
-      ),
-    },
-    {
-      title: "Location  ",
-      dataIndex: "location",
-      key: "location",
-      render: (row) => (
-        <div>
-          <div>{row.place}</div>
-        </div>
-      ),
-    },
-    {
-      title: "Ad Posted",
-      dataIndex: "ads",
-      key: "ads",
-      render: (row) => (
-        <div>
-          <div>{row.adposted}</div>
-        </div>
-      ),
-    },
-    {
-      title: "User Verification",
-      dataIndex: "verification",
-      key: "verification",
-      render: (_, { verification }) => {
-        return verification.userverification === "verified" ? (
-          <div className="verified verification">
-            {verification.userverification}
-          </div>
-        ) : verification.userverification === "in review" ? (
-          <div className="inReview verification">
-            {verification.userverification}
-          </div>
-        ) : (
-          <div className="verification">{verification.userverification}</div>
-        );
-      },
-    },
-=======
     // ID
     {
       title: "Student Id",
@@ -278,7 +200,6 @@ const UserManagement = () => {
       },
     },
     // ACTION
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd
     {
       title: "Action",
       key: "action",
@@ -287,11 +208,7 @@ const UserManagement = () => {
           <div className="d-flex">
             <div className="mar-right-8 cPointer">
               {" "}
-<<<<<<< HEAD
-              <Link to="/userManagement/edit">
-=======
               <Link to="/admin/userManagement/edit">
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd
                 <EditOutlined style={{ fontSize: "20px", color: "black" }} />
               </Link>
             </div>
@@ -304,82 +221,6 @@ const UserManagement = () => {
     },
   ];
 
-<<<<<<< HEAD
-  const data = [
-    {
-      key: "1",
-      name: { name: "Danesha Russ" },
-      email: { emailaddress: "agileinfoways@gmail.com" },
-      number: { phonenumber: 4578444242 },
-      ads: { adposted: 1 },
-      location: { place: "sarjah" },
-      verification: { userverification: "verified" },
-      tags: ["Active"],
-    },
-    {
-      key: "2",
-      name: { name: "William Korn unenrolled" },
-      email: { emailaddress: "agileinfoways@gmail.com" },
-      number: { phonenumber: 4578444242 },
-      ads: { adposted: 1 },
-      location: { place: "sarjah" },
-      verification: { userverification: "in review" },
-      tags: ["Inactive"],
-    },
-    {
-      key: "3",
-      name: { name: "Chakkira Wonnum" },
-      email: { emailaddress: "agileinfoways@gmail.com" },
-      number: { phonenumber: 4578444242 },
-      ads: { adposted: 1 },
-      location: { place: "sarjah" },
-      verification: { userverification: "verified" },
-      tags: ["Active"],
-    },
-    {
-      key: "4",
-      name: { name: "Paul Vines" },
-      email: { emailaddress: "agileinfoways@gmail.com" },
-      number: { phonenumber: 4578444242 },
-      ads: { adposted: 1 },
-      location: { place: "sarjah" },
-      verification: { userverification: "in review" },
-      tags: ["Inactive"],
-    },
-    {
-      key: "5",
-      name: { name: "Edward Canning" },
-      email: { emailaddress: "agileinfoways@gmail.com" },
-      number: { phonenumber: 4578444242 },
-      ads: { adposted: 1 },
-      location: { place: "sarjah" },
-      verification: { userverification: "verified" },
-      tags: ["Inactive"],
-    },
-    {
-      key: "6",
-      name: { name: "David Smith" },
-      email: { emailaddress: "agileinfoways@gmail.com" },
-      number: { phonenumber: 4578444242 },
-      ads: { adposted: 1 },
-      location: { place: "sarjah" },
-      verification: { userverification: "verified" },
-      tags: ["Inactive"],
-    },
-    {
-      key: "7",
-      name: { name: "Ann Hopkins" },
-      email: { emailaddress: "agileinfoways@gmail.com" },
-      number: { phonenumber: 4578444242 },
-      ads: { adposted: 1 },
-      location: { place: "sarjah" },
-      verification: { userverification: "verified" },
-      tags: ["Active"],
-    },
-  ];
-
-=======
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd
   const [isModalOpen, setIsModalOpen] = useState(false);
   const showModal = () => {
     setIsModalOpen(true);
@@ -451,34 +292,6 @@ const UserManagement = () => {
     setIsModalOpen(false);
   };
 
-<<<<<<< HEAD
-  return (
-    <>
-      <BreadCrumbs list={list} />
-      <div className="user-management shadow-paper auto-height">
-        <Row gutter={[{ xs: 0, sm: 0 }, { xs:12,sm: 12 }]} className="mar-bottom-20">
-          <Col xl={12} lg={8} md={16} sm={24}>
-            <div className="searchGrp">
-              <Search
-                placeholder="Search by name"
-                size="large"
-                onSearch={onSearch}
-                className="search"
-              />
-            </div>
-          </Col>
-          <Col xl={12} lg={16} md={8} sm={24}>
-            <Row justify="end">
-              <Button type="primary">Add</Button>
-            </Row>
-          </Col>
-        </Row>
-        <Table columns={columns} dataSource={data} scroll={{ x: 980 }} />
-      </div>
-      <CustomModal open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>Are you sure you want to delete?</p>
-      </CustomModal>
-=======
   console.log(data);
 
   return (
@@ -534,14 +347,11 @@ const UserManagement = () => {
           </CustomModal>
         </>
       )}
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd
     </>
   );
 };
 
 export default UserManagement;
-<<<<<<< HEAD
-=======
 
 // const data = [
 //   {
@@ -615,4 +425,3 @@ export default UserManagement;
 //     tags: ["Active"],
 //   },
 // ];
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd

@@ -1,12 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-
-const SessionRegister = () => {
-  return <div>SessionRegister</div>;
-};
-
-export default SessionRegister;
-=======
 import React, { useContext, useState } from "react";
 import { AuthContext } from "../../../context/AuthContext";
 import { db } from "../../../firebase/firebase";
@@ -240,4 +231,3 @@ const SessionRegistration = () => {
 };
 
 export default SessionRegistration;
->>>>>>> bdedd2c4755ea5ef7b4b8854d283ebf8dcb6dcfd
