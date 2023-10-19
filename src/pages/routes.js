@@ -1,38 +1,42 @@
-  import React, { lazy, useContext, useEffect, useState } from "react";
-  import { Routes, Route, Navigate } from "react-router-dom";
+import React, { lazy, useContext, useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
+import { Routes, Route, Navigate } from "react-router-dom";
+import AuthGuard from "../components/auth";
+import { AuthContext } from "../context/AuthContext";
+import { db } from "../firebase/firebase";
 
-  import AuthGuard from "../components/auth";
-  import { AuthContext } from "../context/AuthContext";
-  import { db } from "../firebase/firebase";
+// Importing admin route components
 
-  // Importing admin route components
-  import EditUserManagement from "./admin/UserManagement/edit";
-  import AddUserManagement from "./admin/UserManagement/add";
-  import TutorAvailability from "./admin/TutorAvailability/index";
-  import SessionArrangement from "./admin/SessionArrangement/index";
+import EditUserManagement from "./admin/UserManagement/edit";
+import AddUserManagement from "./admin/UserManagement/add";
+import TutorAvailability from "./admin/TutorAvailability/index";
+import SessionArrangement from "./admin/SessionArrangement/index";
+
 
   // Importing student route components
   import SessionRegistration from "./student/SessionRegistration";
 
-  // Importing tutor route components
-  import OrganizeAvailability from "./tutor/organizeAvailability/index";
-  import Schedule from "./tutor/Schedule/index.js";
+// Importing tutor route components
+import Schedule from "./tutor/Schedule/index.js";
+import NewSessionQA from "./tutor/sessionQA/new";
+import SessionQA from "./tutor/sessionQA/index";
+import EditSessionQA from "./tutor/sessionQA/edit";
+import Statistics from "./admin/Statistics/index.js";
 
-  import { doc, getDoc } from "firebase/firestore";
-
-  // Lazy-loaded route components
-  const LoginIn = lazy(() => import("./LoginIn"));
-  const Register = lazy(() => import("./Register"));
-  const ForgotPassword = lazy(() => import("./ForgotPassword"));
-  const ResetPassword = lazy(() => import("./ResetPassword"));
-  const Layout = lazy(() => import("../components/layout"));
-  const AdminDashboard = lazy(() => import("./admin/Dashboard/index"));
-  const StudentDashboard = lazy(() => import("./student/Dashboard/index"));
-  const TutorDashboard = lazy(() => import("./tutor/Dashboard/index"));
-  const MyProfile = lazy(() => import("./MyProfile"));
-  const EditProfile = lazy(() => import("./MyProfile/EditProfile"));
-  const ChangePassword = lazy(() => import("./MyProfile/ChangePassword"));
-  const UserManagement = lazy(() => import("./admin/UserManagement"));
+// Lazy-loaded route components
+const LoginIn = lazy(() => import("./LoginIn"));
+const Register = lazy(() => import("./Register"));
+const ForgotPassword = lazy(() => import("./ForgotPassword"));
+const ResetPassword = lazy(() => import("./ResetPassword"));
+const Layout = lazy(() => import("../components/layout"));
+const AdminDashboard = lazy(() => import("./admin/Dashboard/index"));
+const StudentDashboard = lazy(() => import("./student/Dashboard/index"));
+const TutorDashboard = lazy(() => import("./tutor/Dashboard/index"));
+const MyProfile = lazy(() => import("./MyProfile"));
+const EditProfile = lazy(() => import("./MyProfile/EditProfile"));
+const ChangePassword = lazy(() => import("./MyProfile/ChangePassword"));
+const UserManagement = lazy(() => import("./admin/UserManagement"));
+const Helpline = lazy(() => import("./Helpline"));
 
   const Routing = () => {
     const { currentUser } = useContext(AuthContext);
@@ -87,114 +91,122 @@
     }, [currentUser?.email]);
     // const [container, setContainer] = useState(null);
 
-    return (
-      <Routes>
-        {currentUser ? ( // Check if the user is logged in
-          <>
-            {userRole ? ( // Check if userRole is available
-              // Render routes based on userRole
-              userRole === "admin" ? (
+  return (
+    <Routes>
+      {currentUser ? ( // Check if the user is logged in
+        <>
+          {userRole ? ( // Check if userRole is available
+            // Render routes based on userRole
+            userRole === "admin" ? (
+              <Route
+                path="/"
+                element={
+                  <AuthGuard>
+                    <Layout />
+                  </AuthGuard>
+                }
+              >
+                {/* Admin routes */}
+                <Route path="/" element={<Navigate replace to="/admin" />} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/myprofile" element={<MyProfile />} />
+                <Route path="/admin/myprofile/edit" element={<EditProfile />} />
                 <Route
-                  path="/"
-                  element={
-                    // <AuthGuard>
-                      <Layout />
-                    // </AuthGuard>
-                  }
-                >
-                  {/* Admin routes */}
-                  <Route path="/" element={<Navigate replace to="/admin" />} />
-                  <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  <Route path="/admin/myprofile" element={<MyProfile />} />
-                  <Route path="/admin/myprofile/edit" element={<EditProfile />} />
-                  <Route
-                    path="/admin/myprofile/changepassword"
-                    element={<ChangePassword />}
-                  />
-                  <Route
-                    path="/admin/userManagement"
-                    element={<UserManagement />}
-                  />
-                  <Route
-                    path="/admin/userManagement/edit"
-                    element={<EditUserManagement />}
-                  />
-                  <Route
-                    path="/admin/userManagement/add"
-                    element={<AddUserManagement />}
-                  />
-                  <Route
-                    path="/admin/tutoravailability"
-                    element={<TutorAvailability />}
-                  />
-                  <Route
-                    path="/admin/sessionarrangement"
-                    element={<SessionArrangement />}
-                  />
-                </Route>
-              ) : userRole === "student" ? (
+                  path="/admin/myprofile/changepassword"
+                  element={<ChangePassword />}
+                />
                 <Route
-                  path="/"
-                  element={
-                    <AuthGuard>
-                      <Layout />
-                    </AuthGuard>
-                  }
-                >
-                  {/* Student routes */}
-                  <Route path="/" element={<Navigate replace to="/student" />} />
-                  <Route path="/student" element={<StudentDashboard />} />
-                  <Route
-                    path="/student/dashboard"
-                    element={<StudentDashboard />}
-                  />
-                  <Route path="/student/myprofile" element={<MyProfile />} />
-                  <Route
-                    path="/student/myprofile/edit"
-                    element={<EditProfile />}
-                  />
-                  <Route
-                    path="/student/myprofile/changepassword"
-                    element={<ChangePassword />}
-                  />
-                  <Route
-                    path="/student/sessionregistration"
-                    element={<SessionRegistration />}
-                  />
-                </Route>
-              ) : userRole === "tutor" ? (
+                  path="/admin/userManagement"
+                  element={<UserManagement />}
+                />
                 <Route
-                  path="/"
-                  element={
-                    <AuthGuard>
-                      <Layout />
-                    </AuthGuard>
-                  }
-                >
-                  {/* Tutor routes */}
-                  <Route path="/" element={<Navigate replace to="/tutor" />} />
-                  <Route path="/tutor" element={<TutorDashboard />} />
-                  <Route path="/tutor/dashboard" element={<TutorDashboard />} />
-                  <Route path="/tutor/myprofile" element={<MyProfile />} />
-                  <Route path="/tutor/myprofile/edit" element={<EditProfile />} />
-                  <Route
-                    path="/tutor/myprofile/changepassword"
-                    element={<ChangePassword />}
-                  />
-                  <Route
-                    path="/tutor/organizeavailability"
-                    element={<OrganizeAvailability />}
-                  />
-                  <Route path="/tutor/schedule" element={<Schedule />} />
-                </Route>
-              ) : (
-                // Handle unknown roles here or redirect to an error page
-                <Route path="*" element={<Navigate replace to="/" />} />
-              )
+                  path="/admin/userManagement/edit"
+                  element={<EditUserManagement />}
+                />
+                <Route
+                  path="/admin/userManagement/add"
+                  element={<AddUserManagement />}
+                />
+                <Route
+                  path="/admin/tutoravailability"
+                  element={<TutorAvailability />}
+                />
+                <Route
+                  path="/admin/sessionarrangement"
+                  element={<SessionArrangement />}
+                />
+                <Route path="/admin/statistics" element={<Statistics />} />
+              </Route>
+            ) : userRole === "student" ? (
+              <Route
+                path="/"
+                element={
+                  <AuthGuard>
+                    <Layout />
+                  </AuthGuard>
+                }
+              >
+                {/* Student routes */}
+                <Route path="/" element={<Navigate replace to="/student" />} />
+                <Route path="/student" element={<StudentDashboard />} />
+                <Route
+                  path="/student/dashboard"
+                  element={<StudentDashboard />}
+                />
+                <Route path="/student/myprofile" element={<MyProfile />} />
+                <Route
+                  path="/student/myprofile/edit"
+                  element={<EditProfile />}
+                />
+                <Route
+                  path="/student/myprofile/changepassword"
+                  element={<ChangePassword />}
+                />
+                <Route
+                  path="/student/sessionregistration"
+                  element={<SessionRegistration />}
+                />
+                <Route path="/student/helpline" element={<Helpline />} />
+              </Route>
+            ) : userRole === "tutor" ? (
+              <Route
+                path="/"
+                element={
+                  <AuthGuard>
+                    <Layout />
+                  </AuthGuard>
+                }
+              >
+                {/* Tutor routes */}
+                <Route path="/" element={<Navigate replace to="/tutor" />} />
+                <Route path="/tutor" element={<TutorDashboard />} />
+                <Route path="/tutor/dashboard" element={<TutorDashboard />} />
+                <Route path="/tutor/myprofile" element={<MyProfile />} />
+                <Route path="/tutor/myprofile/edit" element={<EditProfile />} />
+                <Route
+                  path="/tutor/myprofile/changepassword"
+                  element={<ChangePassword />}
+                />
+
+                <Route path="/tutor/schedule" element={<Schedule />} />
+                <Route
+                  path="/tutor/session-qa/new"
+                  element={<NewSessionQA />}
+                />
+                <Route
+                  path="/tutor/session-qa/edit/:id"
+                  element={<EditSessionQA />}
+                />
+                <Route path="/tutor/session-qa" element={<SessionQA />} />
+              </Route>
             ) : (
+              // Handle unknown roles here or redirect to an error page
               <Route path="*" element={<Navigate replace to="/" />} />
-            )}
+            )
+          ) : (
+            <Route path="*" element={<Navigate replace to="/" />} />
+          )}
 
             {/* Include global or universal route */}
             <Route path="/register" element={<Register />} />
