@@ -3,12 +3,12 @@ import { Union, UserICon } from "../svg";
 
 // Helper function to create sidebar items
 function getSidebarItem(label, key, icon, link) {
-  return {
-    key,
-    icon,
-    label,
-    link,
-  };
+	return {
+		key,
+		icon,
+		label,
+		link,
+	};
 }
 
 // Sidebar items for admin
