@@ -26,7 +26,7 @@ const breadcrumbsList = [
 
 const data = [
   { name: "English", dataset1: 300 },
-  { name: "Mathematics", dataset1: 900 },
+  { name: "Mathematics", dataset1: 700 },
   { name: "Science", dataset1: 650 },
   { name: "The Arts", dataset1: 400 },
   { name: "Social Sciences", dataset1: 450 },

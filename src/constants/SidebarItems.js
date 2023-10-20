@@ -1,16 +1,6 @@
 import { Link } from "react-router-dom";
 import { Union, UserICon } from "../svg";
 
-// Helper function to create sidebar items
-// function getSidebarItem(label, key, icon, link) {
-//   return {
-//     key,
-//     icon,
-//     label,
-//     link,
-//   };
-// }
-
 function getSidebarItem(label, key, icon, children) {
   return {
     key,
@@ -50,6 +40,7 @@ export const adminSidebarItems = [
       <UserICon />
     </Link>
   ),
+
   getSidebarItem(
     "Statistics",
     "statistics",
@@ -114,7 +105,7 @@ export const tutorSidebarItems = [
       <UserICon />
     </Link>
   ),
-
+ 
   getSidebarItem(
     "Schedule",
     "schedule",
