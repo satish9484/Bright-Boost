@@ -9,21 +9,15 @@ import BreadCrumbs from "../../components/common/Breadcrumbs";
 import Card from "../../components/common/Card";
 const { Option } = Select;
 
-const subjects = [
-	"English",
-	"Mathematics",
-	"Science",
-	"Humanities and Social Sciences",
-	"The Arts",
+const category = [
+	"Technical issue",
+	"Tutor-related",
+	"Timing-related",
+	"Subject-related",
+	"Other matter",
 ];
 
-const tutorsBySubject = {
-	English: ["Harvey", "John"],
-	Mathematics: ["Rose", "Duane"],
-	Science: ["Earl", "Clifford"],
-	HumanitiesAndSocialSciences: ["Dennis", "Ophelia"],
-	TheArts: ["Della", "Kate"],
-};
+const urgency = ["High", "Medium", "Low"];
 
 const collectionName = "Bright-Boost";
 const documentId = "helpline";
@@ -31,7 +25,7 @@ const documentId = "helpline";
 const initialStudentData = {
 	email: "",
 	subject: "",
-	tutor: "",
+	urgency: "Low",
 	date: "",
 	time: "",
 	inquiry: "",
@@ -44,9 +38,6 @@ const Helpline = () => {
 	const [currentDate] = useState(moment().format());
 	const [inquryMessage, setInquryMessage] = useState("");
 	const [form] = Form.useForm();
-	const [tutorListForSubject, setTutorListForSubject] = useState(
-		tutorsBySubject[initialStudentData.subject] || []
-	);
 
 	// Function to handle form submission
 	const handleSubmit = async (values) => {
@@ -58,7 +49,7 @@ const Helpline = () => {
 				subject: values.subject,
 				date: currentDate,
 				time: currentTime,
-				tutor: values.tutor,
+				urgency: values.urgency,
 				inquiry: inquryMessage,
 				answered: false,
 			};
@@ -68,7 +59,7 @@ const Helpline = () => {
 					[values.subject]: arrayUnion(dataToStore),
 				});
 			} else {
-				const dataToSet = subjects.reduce((acc, subject) => {
+				const dataToSet = category.reduce((acc, subject) => {
 					acc[subject] = [];
 					return acc;
 				}, {});
@@ -100,13 +91,8 @@ const Helpline = () => {
 
 	// Function to handle subject selection
 	const handleSubjectChange = (value) => {
-		if (value in tutorsBySubject) {
-			setTutorListForSubject(tutorsBySubject[value]);
-			form.setFieldsValue({ tutor: tutorsBySubject[value][0] || "" });
-		} else {
-			console.log("false value");
-			setTutorListForSubject([]);
-		}
+		form.setFieldValue(value);
+		console.log("false value");
 	};
 
 	return (
@@ -128,21 +114,21 @@ const Helpline = () => {
 
 						<Form.Item
 							className="col-xl-6 col-md-8 form-group"
-							label="Subject"
+							label="Select a category"
 							labelWrap={true}
 							name="subject"
 							rules={[
 								{
 									required: true,
-									message: "Please select a subject",
+									message: "Please select a category",
 								},
 							]}
 						>
 							<Select
-								placeholder="Select Subject"
+								placeholder="Select category"
 								onChange={handleSubjectChange}
 							>
-								{subjects.map((subject) => (
+								{category.map((subject) => (
 									<Option key={subject} value={subject}>
 										{subject}
 									</Option>
@@ -152,19 +138,19 @@ const Helpline = () => {
 
 						<Form.Item
 							className="col-xl-6 col-md-8 form-group"
-							label="Tutor Name (if applicable)"
+							label="How urgent is your inquiry?"
 							labelWrap={true}
-							name="tutor"
+							name="urgency"
 							rules={[
 								{
-									message: "Please select a tutor",
+									message: "Please select an urgency",
 								},
 							]}
 						>
-							<Select placeholder="Tutor Name">
-								{tutorListForSubject.map((tutor) => (
-									<Option key={tutor} value={tutor}>
-										{tutor}
+							<Select>
+								{urgency.map((item) => (
+									<Option key={item} value={item}>
+										{item}
 									</Option>
 								))}
 							</Select>

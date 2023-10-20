@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import { Union, UserICon } from "../svg";
 
-// Helper function to create sidebar items
-function getSidebarItem(label, key, icon, link) {
+function getSidebarItem(label, key, icon, children) {
   return {
     key,
     icon,
+    children,
     label,
-    link,
   };
 }
 
@@ -41,6 +40,7 @@ export const adminSidebarItems = [
       <UserICon />
     </Link>
   ),
+
   getSidebarItem(
     "Statistics",
     "statistics",
@@ -48,6 +48,20 @@ export const adminSidebarItems = [
       <UserICon />
     </Link>
   ),
+  getSidebarItem(
+    "ViewHelpline",
+    "ViewHelpline",
+    <Link to="/admin/ViewHelpline">
+      <UserICon />
+    </Link>
+  ),
+  getSidebarItem("Report And Graph", "ReportAndGraph", <Union />, [
+    getSidebarItem(
+      "Popular Subject",
+      "popularsubject",
+      <Link to="/admin/popularsubject"></Link>
+    ),
+  ]),
 ];
 
 // Sidebar items for student
@@ -91,10 +105,7 @@ export const tutorSidebarItems = [
       <UserICon />
     </Link>
   ),
-  // getItem("Car Management", "car management", <Union />, [
-  //   getItem("New Car", "New car", <Link to="/newCar"></Link>),
-  //   getItem("Used Car", "Used car", <Link to="/usedCar"></Link>),
-  // ]),
+ 
   getSidebarItem(
     "Schedule",
     "schedule",

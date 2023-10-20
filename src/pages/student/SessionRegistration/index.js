@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 const { Option } = Select;
 const dateFormatList = "DD/MM/YYYY";
 
-// Available subjects for registration
+// Available subjects
 const subjects = [
   "English",
   "Mathematics",
@@ -23,11 +23,13 @@ const subjects = [
 
 // Tutors by subject
 const tutorsBySubject = {
-  English: ["Harvey", "John"],
-  Mathematics: ["Rose", "Duane"],
-  Science: ["Earl", "Clifford"],
-  HumanitiesAndSocialSciences: ["Dennis", "Ophelia"],
-  TheArts: ["Della", "Kate"],
+  English: [{ name: "Harvey", email: "tutor1gmailcom" }],
+  Mathematics: [{ name: "Rose", email: "tutor1gmailcom" }],
+  Science: [{ name: "Earl", email: "tutor1gmailcom" }],
+  "Humanities and Social Sciences": [
+    { name: "Dennis", email: "tutor1gmailcom" },
+  ],
+  "The Arts": [{ name: "Della", email: "tutor1gmailcom" }],
 };
 
 const sessionTime = [1, 2];
@@ -44,7 +46,7 @@ const docRef_1 = doc(db, collectionName, documentId_1);
 const initialData = {
   email: "",
   subject: "English",
-  tutor: tutorsBySubject["English"][0] || "",
+  tutor: tutorsBySubject[Object.keys(tutorsBySubject)[0]][0]?.name || "",
   date: "",
   time: "",
   sessionTime: 1,
@@ -69,7 +71,57 @@ const SessionRegistration = () => {
   const currentTime = moment().format("HH:mm:ss");
 
   useEffect(() => {
-    // Additional setup can be added here if needed
+    const fetchData = async () => {
+      try {
+        const docSnapshot = await getDoc(docRef_1);
+
+        if (!docSnapshot.exists()) {
+          console.log("Document doesn't exist.");
+          return tutorsBySubject;
+        }
+
+        const data = docSnapshot.data();
+
+        if (!data || !Object.keys(data).length) {
+          console.log("No data to process.");
+          return tutorsBySubject;
+        }
+
+        for (const [tutorEmail, tutorInfo] of Object.entries(data)) {
+          const tutorName = tutorInfo?.Name;
+          const tutorProfessionalSubject = tutorInfo?.availabilityData;
+
+          for (const subjectName of Object.keys(tutorProfessionalSubject)) {
+            if (subjects.includes(subjectName)) {
+              if (!tutorsBySubject[subjectName]) {
+                tutorsBySubject[subjectName] = [];
+              }
+
+              // Check if the tutor is not already in the list for the subject
+              const existingTutor = tutorsBySubject[subjectName].find(
+                (tutor) => tutor.email === tutorEmail
+              );
+
+              if (!existingTutor) {
+                // console.log(subjectName, tutorName, tutorEmail);
+                tutorsBySubject[subjectName].push({
+                  name: tutorName,
+                  email: tutorEmail,
+                });
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data from Firestore: ", error);
+      }
+
+      return tutorsBySubject;
+    };
+
+    fetchData();
+
+    console.log(tutorsBySubject);
   }, []);
 
   // Function to get available session slot limit
@@ -100,8 +152,10 @@ const SessionRegistration = () => {
         const data = docSnapshot_1?.data();
 
         if (
-          data[tutorId]?.availabilityData?.hasOwnProperty(date) &&
-          data[tutorId]?.availabilityData[date]
+          data[tutorId]?.availabilityData[
+            sessionRegistrationData.subject
+          ]?.hasOwnProperty(date) &&
+          data[tutorId]?.availabilityData[sessionRegistrationData.subject][date]
         ) {
           return true;
         } else {
@@ -167,39 +221,54 @@ const SessionRegistration = () => {
   // Function to handle form submission
   const handleFinish = async (values) => {
     const keyFormat = sessionRegistrationData.date.replace(/\//g, "");
-    const tutorStatusOnSelectedDate = await tutorsAvailability(
-      "tutor1gmailcom",
-      keyFormat
-    );
 
-    const limit = await getAvailableSessionSlot(
-      sessionRegistrationData.subject,
-      sessionRegistrationData.date
-    );
-    const dataToStore = {
-      email: currentUser?.email || "",
-      time: currentTime,
-      sessionTime: values.sessionTime,
-      tutor: values.tutor,
-    };
-    try {
-      if (tutorStatusOnSelectedDate) {
-        if (limit === 1) {
-          if (values.sessionTime === 1) {
+    const selectedSubject = sessionRegistrationData?.subject; // Change this to the subject you want
+    const selectedName = sessionRegistrationData?.tutor; // Change this to the name you want
+
+    const email =
+      (
+        (tutorsBySubject[selectedSubject] || []).find(
+          (tutor) => tutor.name === selectedName
+        ) || {}
+      ).email || "Tutor not found";
+
+    if (email) {
+      const tutorStatusOnSelectedDate = await tutorsAvailability(
+        email,
+        keyFormat
+      );
+
+      const limit = await getAvailableSessionSlot(
+        sessionRegistrationData.subject,
+        sessionRegistrationData.date
+      );
+      const dataToStore = {
+        email: currentUser?.email || "",
+        time: currentTime,
+        sessionTime: values.sessionTime,
+        tutor: values.tutor,
+      };
+      try {
+        if (tutorStatusOnSelectedDate) {
+          if (limit === 1) {
+            if (values.sessionTime === 1) {
+              updateDataAtFirebase(values.sessionTime, dataToStore);
+            } else {
+              toast.info("Please select a session time as 1 hour");
+            }
+          } else if (limit === null) {
             updateDataAtFirebase(values.sessionTime, dataToStore);
           } else {
-            toast.info("Please select a session time as 1 hour");
+            toast.info("No slot available for this date.");
           }
-        } else if (limit === null) {
-          updateDataAtFirebase(values.sessionTime, dataToStore);
         } else {
-          toast.info("No slot available for this date.");
+          toast.info("Tutor is not available");
         }
-      } else {
-        toast.info("Tutor is not available");
+      } catch (error) {
+        console.error("Error adding student record: ", error);
       }
-    } catch (error) {
-      console.error("Error adding student record: ", error);
+    } else {
+      toast.error("email not found");
     }
   };
 
@@ -214,30 +283,46 @@ const SessionRegistration = () => {
   // Function to handle date change
   const handleDateChange = async (date, dateString) => {
     const keyFormat = dateString.replace(/\//g, "");
-    const tutorStatusOnSelectedDate = await tutorsAvailability(
-      "tutor1gmailcom",
-      keyFormat
-    );
-    const limit = await getAvailableSessionSlot(
-      sessionRegistrationData.subject,
-      dateString
-    );
-    setSelectedDate(dateString);
-    setSessionRegistrationData({
-      ...sessionRegistrationData,
-      date: dateString,
-    });
 
-    if (tutorStatusOnSelectedDate) {
-      limit === 1
-        ? toast.info("Only 1-hour slot is available")
-        : limit === 2
-        ? toast.info("This day's slot is full.")
-        : toast.info("For this day, all slots are available");
-    } else {
-      toast.info(
-        "Please select any other date since the tutor is not available."
+    const selectedSubject = sessionRegistrationData?.subject; // Change this to the subject you want
+    const selectedName = sessionRegistrationData?.tutor; // Change this to the name you want
+
+    const email =
+      (
+        (tutorsBySubject[selectedSubject] || []).find(
+          (tutor) => tutor.name === selectedName
+        ) || {}
+      ).email || "Tutor not found";
+
+    if (email) {
+      console.log(email);
+      const tutorStatusOnSelectedDate = await tutorsAvailability(
+        email,
+        keyFormat
       );
+      const limit = await getAvailableSessionSlot(
+        sessionRegistrationData.subject,
+        dateString
+      );
+      setSelectedDate(dateString);
+      setSessionRegistrationData({
+        ...sessionRegistrationData,
+        date: dateString,
+      });
+
+      if (tutorStatusOnSelectedDate) {
+        limit === 1
+          ? toast.info("Only 1-hour slot is available")
+          : limit === 2
+          ? toast.info("This day's slot is full.")
+          : toast.info("For this day, all slots are available");
+      } else {
+        toast.info(
+          "Please select any other date since the tutor is not available."
+        );
+      }
+    } else {
+      toast.error("Tutor not found");
     }
   };
 
@@ -246,10 +331,17 @@ const SessionRegistration = () => {
     setSessionRegistrationData({ ...sessionRegistrationData, subject: value });
     if (value in tutorsBySubject) {
       setTutorListForSubject(tutorsBySubject[value]);
-      form.setFieldsValue({ tutor: tutorsBySubject[value][0] || "" });
+      form.setFieldsValue({
+        tutor:
+          (tutorsBySubject[value] && tutorsBySubject[value][0])?.name || "",
+      });
     } else {
       setTutorListForSubject([]);
     }
+  };
+
+  const handleTutorNameChange = (value) => {
+    setSessionRegistrationData({ ...sessionRegistrationData, tutor: value });
   };
 
   return (
@@ -311,10 +403,13 @@ const SessionRegistration = () => {
                 },
               ]}
             >
-              <Select placeholder="Tutor Names">
-                {tutorListForSubject.map((tutor) => (
-                  <Option key={tutor} value={tutor}>
-                    {tutor}
+              <Select
+                placeholder="Tutor Names"
+                onChange={handleTutorNameChange}
+              >
+                {tutorListForSubject.map((tutor, i) => (
+                  <Option key={i} value={tutor.name}>
+                    {tutor.name}
                   </Option>
                 ))}
               </Select>

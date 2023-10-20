@@ -6,12 +6,12 @@ import { AuthContext } from "../context/AuthContext";
 import { db } from "../firebase/firebase";
 
 // Importing admin route components
-
 import EditUserManagement from "./admin/UserManagement/edit";
 import AddUserManagement from "./admin/UserManagement/add";
 import TutorAvailability from "./admin/TutorAvailability/index";
 import SessionArrangement from "./admin/SessionArrangement/index";
-
+import ViewHelpline from "./admin/ViewHelpline";
+import PopularSubject from "./admin/ReportAndGraph/PopularSubject/index";
 
   // Importing student route components
   import SessionRegistration from "./student/SessionRegistration";
@@ -137,6 +137,9 @@ const Helpline = lazy(() => import("./Helpline"));
                   element={<SessionArrangement />}
                 />
                 <Route path="/admin/statistics" element={<Statistics />} />
+                <Route path="/admin/viewhelpline" element={<ViewHelpline />} />
+                {/* PopularSubject */}
+                <Route path="/admin/popularsubject" element={<PopularSubject />} />
               </Route>
             ) : userRole === "student" ? (
               <Route
