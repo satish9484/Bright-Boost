@@ -454,7 +454,7 @@ const SessionRegistration = () => {
             <div className="col-xl-12 d-flex justify-content-end mar-top-8">
               <Button className="mar-right-8">Cancel</Button>
               <Button type="primary" htmlType="submit">
-                Save
+                Register
               </Button>
             </div>
           </div>
