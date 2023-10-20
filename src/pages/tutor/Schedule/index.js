@@ -1,183 +1,142 @@
 import React, { useState, useEffect, useContext } from "react";
 import "./style.scss";
 import { db } from "../../../firebase/firebase";
-import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import dayjs from "dayjs";
 import { Calendar, Radio, message } from "antd";
 import { AuthContext } from "../../../context/AuthContext";
 
 const Schedule = () => {
-	const { currentUser } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
-	const [value, setValue] = useState(() => dayjs("2023-10-01"));
+  const [value, setValue] = useState(() => dayjs("2023-10-01"));
+  const [tutorEmail, setTutorEmail] = useState();
+  const [tutorName, setTutorName] = useState();
+  const [subjects, setSubjects] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState();
+  const [availabilityData, setAvailabilityData] = useState({});
 
-	const [tutorEmail, setTutorEmail] = useState();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const docRef = doc(db, "Bright-Boost", "tutorsAvailability");
+        const docSnap = await getDoc(docRef);
+        const availabilityData = docSnap.data();
+        const cleanedTutorEmail = removeSpecialCharacters(currentUser.email);
+        setTutorEmail(cleanedTutorEmail);
+        const tutorData = availabilityData[cleanedTutorEmail];
 
-	//sanitise tutor email
-	const removeSpecialCharacters = (email) => {
-		return email.replace(/[^a-zA-Z0-9]/g, ""); // Regular expression to remove all special characters
-	};
+        setTutorName(tutorData.Name);
+        setSubjects(Object.keys(tutorData.availabilityData));
+        setAvailabilityData(tutorData.availabilityData);
 
-	// tutor FULL availability data for all subjects as {Subject1: {DDMMYYYY: true/false}, Subject2: {DDMMYYYY: true/false}}
-	const [fullAvailabilityData, setFullAvailabilityData] = useState();
+        if (subjects.length > 0) {
+          setSelectedSubject(subjects[0]);
+        } else {
+          console.error("No subjects available.");
+        }
 
-	// tutor availability data for a selected subject as {DDMMYYYY: true/false}
-	const [availabilityData, setData] = useState([]);
+        // Check if availabilityData[selectedSubject] is undefined and set it to default if not available
+        if (!availabilityData[selectedSubject]) {
+          availabilityData[selectedSubject] = {};
+          setAvailabilityData(availabilityData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, [currentUser.email, selectedSubject]);
 
-	//   //tutor name
-	const [tutorName, setName] = useState();
+  const removeSpecialCharacters = (email) => {
+    return email.replace(/[^a-zA-Z0-9]/g, "");
+  };
 
-	//tutor subject which availability shoulbe be updated
-	const [selectedSubject, setSelectedSubject] = useState();
+  const handleSubjectChange = (event) => {
+    setSelectedSubject(event.target.value);
+  };
 
-	//all tutor subjects
-	const [subjects, setSubjects] = useState([]);
+  const toggleAvailability = (dateString) => {
+    const updatedAvailabilityData = { ...availabilityData };
+    updatedAvailabilityData[selectedSubject][dateString] =
+      !updatedAvailabilityData[selectedSubject][dateString];
+    setAvailabilityData(updatedAvailabilityData);
+  };
 
-	//to trigger fetchData()
-	const [trigger, setTrigger] = useState(false);
+  const updateAvailability = async () => {
+    try {
+      const availabilityRef = doc(db, "Bright-Boost", "tutorsAvailability");
+      const updateObject = {
+        [`${tutorEmail}.availabilityData.${selectedSubject}`]:
+          availabilityData[selectedSubject],
+      };
+      await updateDoc(availabilityRef, updateObject);
+      message.success("Availability successfully updated!");
+    } catch (error) {
+      message.error("Failed to update availability. Please try again.");
+    }
+  };
 
-	// subject selection to display availability accordingly
-	const handleSubjectChange = (event) => {
-		setSelectedSubject(event.target.value);
-		const selectedSubject = event.target.value;
+  const renderAvailability = (date) => {
+    if (date.day() === 0 || date.day() === 6) {
+      return "Unavailable (Weekend)";
+    }
 
-		// Get availability for the selected subject
-		const availabilityForSelectedSubject =
-			fullAvailabilityData[selectedSubject];
-		setData(availabilityForSelectedSubject);
-	};
+    const dateString = date.format("DDMMYYYY");
+    const isAvailable = availabilityData[selectedSubject]?.[dateString];
+    return isAvailable ? "Available" : "Unavailable";
+  };
 
-	//to get tutor availability data on component mount
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const docRef = doc(db, "Bright-Boost", "tutorsAvailability");
-				const docSnap = await getDoc(docRef);
-				const availabilityData = docSnap.data();
-				const cleanedTutorEmail = removeSpecialCharacters(currentUser.email);
-				setTutorEmail(cleanedTutorEmail);
-				const tutorData = availabilityData[cleanedTutorEmail];
+  return (
+    <div>
+      <h2 className="tutor-info">{tutorName}</h2>
 
-				setName(tutorData.Name);
-				setFullAvailabilityData(tutorData.availabilityData);
+      <Radio.Group onChange={handleSubjectChange} value={selectedSubject}>
+        {subjects.map((subject) => (
+          <Radio key={subject} value={subject}>
+            {subject}
+          </Radio>
+        ))}
+      </Radio.Group>
 
-				const allSubjects = Object.keys(tutorData.availabilityData);
-				setSubjects(allSubjects);
+      <Calendar
+        value={value}
+        onSelect={(newValue) => setValue(newValue)}
+        cellRender={(date) => {
+          const dateString = date.format("DDMMYYYY");
+          const isAvailable = availabilityData[selectedSubject]?.[dateString];
+          const isWeekend = date.day() === 0 || date.day() === 6;
 
-				if (allSubjects.length > 0) {
-					const firstSubject = allSubjects[0];
+          const cellStyle = {
+            backgroundColor: isWeekend
+              ? "#b5372f"
+              : isAvailable
+              ? "#22dc41"
+              : "#ebe5e5",
+            padding: "8px",
+            textAlign: "center",
+            cursor: "pointer",
+          };
 
-					setSelectedSubject(firstSubject);
-
-					// Get availability for the first subject
-					const availabilityForFirstSubject =
-						tutorData.availabilityData[firstSubject];
-					setData(availabilityForFirstSubject);
-				} else {
-					console.error("No subjects available.");
-				}
-			} catch (error) {
-				console.error("Error fetching data:", error);
-			}
-		};
-		fetchData();
-	}, [trigger]); // Run on component mount and when updated availability submitted to DB
-
-	const onSelect = (newValue) => {
-		setValue(newValue);
-	};
-
-	const onPanelChange = (newValue) => {
-		setValue(newValue);
-	};
-
-	//print tutor availability as "Available/Unavailable"
-	const renderAvailability = (date, availability) => {
-		if (date.day() === 0 || date.day() === 6) {
-			return "Unavailable (Weekend)";
-		}
-
-		return availability ? "Unavailable" : "Available";
-	};
-
-	//toggle availsbility on click
-	const toggleAvailability = (date) => {
-		const dateString = date.format("DDMMYYYY");
-
-		// Update availability for the clicked date
-		const updatedAvailabilityData = {
-			...availabilityData,
-			[dateString]: !availabilityData[dateString],
-		};
-		// Update state with the updated availability data
-		setData(updatedAvailabilityData);
-	};
-
-	//update tutor availability for a selected subject in DB on submit
-	const updateAvailbility = async () => {
-		try {
-			const availabilityRef = doc(db, "Bright-Boost", "tutorsAvailability");
-			const updatePath = `${tutorEmail}.availabilityData.${selectedSubject}`;
-			const updateObject = {
-				[updatePath]: availabilityData,
-			};
-			setTrigger(!trigger);
-			await updateDoc(availabilityRef, updateObject);
-			message.success("Availability successfully updated!");
-		} catch (error) {
-			message.error("Failed to update availability. Please try again.");
-		}
-	};
-
-	return (
-		<>
-			<h2 className="tutor-info">{tutorName}</h2>
-
-			<Radio.Group onChange={handleSubjectChange} value={selectedSubject}>
-				{subjects.map((subject) => (
-					<Radio key={subject} value={subject}>
-						{subject}
-					</Radio>
-				))}
-			</Radio.Group>
-
-			<Calendar
-				value={value}
-				onSelect={onSelect}
-				onPanelChange={onPanelChange}
-				cellRender={(date) => {
-					const dateString = date.format("DDMMYYYY");
-					const isAvailable = availabilityData[dateString]; // Check if date is available
-					const isWeekend = date.day() === 0 || date.day() === 6; // 0 is Sunday, 6 is Saturday
-
-					// Set weekends to always unavaiable
-					const finalAvailability = isWeekend ? true : isAvailable;
-
-					const cellStyle = {
-						backgroundColor: finalAvailability ? "#b5372f" : "#53b563",
-						padding: "8px",
-						textAlign: "center",
-					};
-
-					return (
-						<div
-							style={cellStyle}
-							onClick={() => {
-								onSelect(date);
-								toggleAvailability(date);
-							}}
-						>
-							{`${renderAvailability(date, finalAvailability)} `}
-						</div>
-					);
-				}}
-			/>
-			<div className="button-container">
-				<button className="button-submit" onClick={updateAvailbility}>
-					Submit
-				</button>
-			</div>
-		</>
-	);
+          return (
+            <div
+              style={cellStyle}
+              onClick={() => {
+                toggleAvailability(dateString);
+              }}
+            >
+              {`${renderAvailability(date)}`}
+            </div>
+          );
+        }}
+      />
+      <div className="button-container">
+        <button className="button-submit" onClick={updateAvailability}>
+          Submit
+        </button>
+      </div>
+    </div>
+  );
 };
+
 export default Schedule;
