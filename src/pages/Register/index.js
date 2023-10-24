@@ -199,7 +199,7 @@ const Register = (props) => {
 	return (
 		<>
             {contextHolder}
-            <div class="bg">
+            <div className="bg">
 			    <Skeleton />	
             </div>
 		</>

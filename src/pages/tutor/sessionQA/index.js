@@ -65,7 +65,7 @@ const SessionQA = () => {
                                         avatar={<Avatar src={`https://firebasestorage.googleapis.com/v0/b/placement-app-862af.appspot.com/o/Green-check-mark-icon.png?alt=media&token=de553e4c-5ad9-46c1-8bb9-0d4d2f58356f&_gl=1*av95ji*_ga*MTIyMDk0MDYzOC4xNjk2NDAwMjAw*_ga_CW55HF8NVT*MTY5NjQ3NjQ5OS40LjEuMTY5NjQ3NzMyMS4zLjAuMA..`} />}
                                         title={<Link to={`/tutor/session-qa/edit/` + QAArray.data()[subjects[j]][i].id}>{QAArray.data()[subjects[j]][i].topic}</Link>}
                                         description={description} />;
-                                        answeredBy = <><br /><span class="answererDetails"><strong>Answered by: {QAArray.data()[subjects[j]][i].answerer} in {durationHours} hrs {durationMinutes} mins {durationSeconds} secs.</strong></span></>;
+                                        answeredBy = <><br /><span className="answererDetails"><strong>Answered by: {QAArray.data()[subjects[j]][i].answerer} in {durationHours} hrs {durationMinutes} mins {durationSeconds} secs.</strong></span></>;
                                     }
                                     else {
                                         meta = <List.Item.Meta

@@ -28,13 +28,11 @@ const subjects = [
 
 // Tutors by subject
 const tutorsBySubject = {
-  English: [{ name: "Harvey", email: "tutor1gmailcom" }],
-  Mathematics: [{ name: "Rose", email: "tutor1gmailcom" }],
-  Science: [{ name: "Earl", email: "tutor1gmailcom" }],
-  "Humanities and Social Sciences": [
-    { name: "Dennis", email: "tutor1gmailcom" },
-  ],
-  "The Arts": [{ name: "Della", email: "tutor1gmailcom" }],
+  English: [],
+  Mathematics: [],
+  Science: [],
+  "Humanities and Social Sciences": [],
+  "The Arts": [],
 };
 
 // Firebase collection and document details
@@ -47,14 +45,11 @@ const docRef = doc(db, collectionName, documentId);
 
 const TutorAvailability = () => {
   const [selectedSubject, setSelectedSubject] = useState("English");
-  const [tutorListForSubject, setTutorListForSubject] = useState(
-    tutorsBySubject["English"] || []
-  );
-  const [selectedTutor, setSelectedTutor] = useState(
-    tutorListForSubject[0]?.name || ""
-  );
-
+  const [tutorListForSubject, setTutorListForSubject] = useState([]);
+  const [selectedTutor, setSelectedTutor] = useState("");
   const [avabilty, setAvabilty] = useState({});
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
 
   useEffect(() => {
     const fetchData = async () => {
@@ -63,6 +58,7 @@ const TutorAvailability = () => {
 
         if (!docSnapshot.exists()) {
           console.log("Document doesn't exist.");
+          setLoading(false); // Data loading is complete
           return tutorsBySubject;
         }
 
@@ -70,6 +66,7 @@ const TutorAvailability = () => {
 
         if (!data || !Object.keys(data).length) {
           console.log("No data to process.");
+          setLoading(false); // Data loading is complete
           return tutorsBySubject;
         }
 
@@ -83,13 +80,11 @@ const TutorAvailability = () => {
                 tutorsBySubject[subjectName] = [];
               }
 
-              // Check if the tutor is not already in the list for the subject
               const existingTutor = tutorsBySubject[subjectName].find(
                 (tutor) => tutor.email === tutorEmail
               );
 
               if (!existingTutor) {
-                // console.log(subjectName, tutorName, tutorEmail);
                 tutorsBySubject[subjectName].push({
                   name: tutorName,
                   email: tutorEmail,
@@ -98,11 +93,12 @@ const TutorAvailability = () => {
             }
           }
         }
-      } catch (error) {
-        console.error("Error fetching data from Firestore: ", error);
-      }
 
-      return tutorsBySubject;
+        setLoading(false); // Data loading is complete
+      } catch (error) {
+        setError("Error fetching data from Firestore: " + error.message);
+        setLoading(false); // Data loading is complete
+      }
     };
 
     fetchData();
@@ -113,24 +109,28 @@ const TutorAvailability = () => {
     if (tutorInfo) {
       tutorsAvailability(tutorInfo.email);
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedSubject, selectedTutor]);
 
+  useEffect(() => {
+    const tutors = tutorsBySubject[selectedSubject];
+    console.log(tutors);
+    setTutorListForSubject(tutors);
+    setSelectedTutor(tutors[0]?.name);
+  }, [selectedSubject]);
+
   // Function to check tutor availability on a specific date
   const tutorsAvailability = async (tutorId) => {
-    const docSnapshot = await getDoc(docRef);
     try {
+      const docSnapshot = await getDoc(docRef);
       if (docSnapshot?.exists()) {
         const data = docSnapshot?.data();
-
-        // Assuming your availability data is structured like this
         const availabilityData = data[tutorId]?.availabilityData;
-
-        console.log(availabilityData[selectedSubject] || {});
         setAvabilty(availabilityData[selectedSubject] || {});
       }
     } catch (error) {
-      console.error("Error fetching data from Firestore: ", error);
+      setError("Error fetching data from Firestore: " + error.message);
     }
   };
 
@@ -138,8 +138,9 @@ const TutorAvailability = () => {
   const handleSubjectChange = (value) => {
     if (value in tutorsBySubject) {
       const tutors = tutorsBySubject[value];
+      console.log(tutors);
       setTutorListForSubject(tutors);
-      setSelectedTutor(tutors[0].name);
+      setSelectedTutor(tutors[0]?.name);
     }
     setSelectedSubject(value);
 
@@ -193,7 +194,7 @@ const TutorAvailability = () => {
     );
   };
 
-  // Function to render data for a specific month
+  // Function to retrieve data for a specific month
   // const monthCellRender = (value) => {
   //   const num = getMonthData(value);
   //   return num ? (
@@ -214,8 +215,6 @@ const TutorAvailability = () => {
   const getListData = (value) => {
     const dateKey = value.format("DDMMYYYY"); // Convert the date to a key in the format DDMMYY
     const isAvailable = avabilty[dateKey?.toString()];
-
-    console.log(avabilty[dateKey]);
 
     if (value.isBefore(moment(), "day")) {
       // Date is in the past
@@ -247,56 +246,56 @@ const TutorAvailability = () => {
           type: "error",
           content: "Unavailable",
         },
-      ]; // Return an Unavailable array if the date is not in avabilty
+      ];
     }
   };
-
-  // Function to retrieve data for a specific month
-  // const getMonthData = (value) => {
-  //   if (value.month() === 8) {
-  //     return 1394;
-  //   }
-  // };
 
   return (
     <>
       <BreadCrumbs list={breadcrumbsList} />
-      <Row
-        gutter={[
-          { xs: 0, sm: 0 },
-          { xs: 12, sm: 12 },
-        ]}
-        className="mar-bottom-20"
-      >
-        <Col xl={12} lg={8} md={16} sm={24}>
-          <Select
-            className="w-100"
-            placeholder="Select Subject"
-            onChange={handleSubjectChange}
-            value={selectedSubject}
-          >
-            {subjects.map((subject) => (
-              <Option key={subject} value={subject}>
-                {subject}
-              </Option>
-            ))}
-          </Select>
-        </Col>
-        <Col xl={12} lg={16} md={8} sm={24}>
-          <Select
-            className="w-100 pad-left"
-            placeholder="Tutor Names"
-            onChange={handleTutorNameChange}
-            value={selectedTutor}
-          >
-            {tutorListForSubject.map((tutor, i) => (
-              <Option key={i} value={tutor.name}>
-                {tutor.name}
-              </Option>
-            ))}
-          </Select>
-        </Col>
-      </Row>
+      {loading ? (
+        <div>Loading...</div>
+      ) : error ? (
+        // Display error state
+        <div>Error: {error}</div>
+      ) : (
+        <Row
+          gutter={[
+            { xs: 0, sm: 0 },
+            { xs: 12, sm: 12 },
+          ]}
+          className="mar-bottom-20"
+        >
+          <Col xl={12} lg={8} md={16} sm={24}>
+            <Select
+              className="w-100"
+              placeholder="Select Subject"
+              onChange={handleSubjectChange}
+              value={selectedSubject}
+            >
+              {subjects.map((subject) => (
+                <Option key={subject} value={subject}>
+                  {subject}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+          <Col xl={12} lg={16} md={8} sm={24}>
+            <Select
+              className="w-100 pad-left"
+              placeholder="Tutor Names"
+              onChange={handleTutorNameChange}
+              value={selectedTutor}
+            >
+              {tutorListForSubject.map((tutor, i) => (
+                <Option key={i} value={tutor.name}>
+                  {tutor.name}
+                </Option>
+              ))}
+            </Select>
+          </Col>
+        </Row>
+      )}
       <Calendar cellRender={cellRender} validRange={validRange} />
     </>
   );

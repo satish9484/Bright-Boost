@@ -1,25 +1,25 @@
-.tutor-info {
-	color: #001529;
-	font-size: 25px;
-	padding-bottom: 30px;
-}
-
-.button-container {
-	display: flex;
-	justify-content: center;
-}
-
-.button-submit {
-	border: 1px solid #ccc;
-	text-align: center;
-	cursor: pointer;
-	font-size: 1.5em;
-}
-
 @import "../../../scss/variable";
 @import "../../../scss/mixin";
 // @import "react-big-calendar/lib/sass/styles";
 // @import "react-big-calendar/lib/addons/dragAndDrop/styles"; // if using DnD
+
+.tutor-info {
+  color: #001529;
+  font-size: 25px;
+  padding-bottom: 30px;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.button-submit {
+  border: 1px solid #ccc;
+  text-align: center;
+  cursor: pointer;
+  font-size: 1.5em;
+}
 
 .calendar {
   display: grid;
@@ -57,6 +57,29 @@
 .button-container {
   display: flex;
   justify-content: center;
+  margin-bottom: 20px;
+  button {
+    cursor: pointer;
+    outline: 0;
+    display: inline-block;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 6px 12px;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+      border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    color: #0d6efd;
+    border-color: #0d6efd;
+    &:hover {
+      color: #fff;
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+  }
 }
 
 .button-submit {
@@ -69,18 +92,52 @@
 }
 
 .tutor-info {
-	color: #001529;
-	font-size: 25px;
+  color: #001529;
+  font-size: 25px;
 }
 
 .button-container {
-	display: flex;
-	justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .button-submit {
-	border: 1px solid #ccc;
-	text-align: center;
-	cursor: pointer;
-	font-size: 1.5em;
+  border: 1px solid #ccc;
+  text-align: center;
+  cursor: pointer;
+  font-size: 1.5em;
+}
+
+.center {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wave {
+  width: 5px;
+  height: 100px;
+  background: linear-gradient(45deg, cyan, #fff);
+  margin: 10px;
+  animation: wave 1s linear infinite;
+  border-radius: 20px;
+}
+
+@for $i from 1 through 10 {
+  .wave:nth-child(#{$i}) {
+    animation-delay: #{($i - 1) * 0.1}s;
+  }
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
 }
